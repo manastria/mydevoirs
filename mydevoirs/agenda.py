@@ -7,6 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.carousel import Carousel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import Screen
+from kivy.uix.textinput import TextInput
 from pony.orm import db_session
 
 from mydevoirs.constants import SEMAINE
@@ -75,7 +76,8 @@ class JourWidget(BoxLayout):
 
     @property
     def nice_date(self):
-        return self.date.strftime("%A %d %B %Y")
+        semaine = self.date.isocalendar()[1]
+        return self.date.strftime("%A %d %B %Y") + f" (semaine {semaine})"
 
     def add_item(self):
         with db_session:
@@ -196,12 +198,37 @@ class CarouselWidget(Carousel):
 class Agenda(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.layout = BoxLayout(orientation="vertical")
+        self.add_widget(self.layout)
+
+        self.goto_input = TextInput(
+            hint_text="Semaine ou date YYYY-MM-DD",
+            multiline=False,
+            size_hint_y=None,
+            height=30,
+        )
+        self.goto_input.bind(on_text_validate=self._on_goto_input)
+        self.layout.add_widget(self.goto_input)
+
         self.carousel = CarouselWidget()
-        self.add_widget(self.carousel)
+        self.layout.add_widget(self.carousel)
 
     def go_date(self, date=None):
-        self.remove_widget(self.carousel)
-
+        self.layout.remove_widget(self.carousel)
         self.carousel = CarouselWidget(date)
+        self.layout.add_widget(self.carousel)
 
-        self.add_widget(self.carousel)
+    def _on_goto_input(self, instance):
+        text = instance.text.strip()
+        if not text:
+            return
+        try:
+            if text.isdigit():
+                year = datetime.date.today().year
+                date = datetime.date.fromisocalendar(year, int(text), 1)
+            else:
+                date = datetime.datetime.strptime(text, "%Y-%m-%d").date()
+            self.go_date(date)
+        except ValueError:
+            pass
+        instance.text = ""

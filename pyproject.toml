@@ -1,3 +1,36 @@
+[tool.poetry]
+name = "mydevoirs"
+version = "1.2.1"
+description = "La prise de devoirs enfin simple !"
+authors = ["Jimmy Girardet <ijkl@netc.fr>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+packages = [{include = "mydevoirs"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+kivy = "*"
+pony = "^0.7.11"
+appdirs = "*"
+"kivy-garden.filebrowser" = "*"
+Pillow = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=6.0.0rc1"
+black = "*"
+coverage = "*"
+briefcase = "0.3.2"
+mimesis = "*"
+isort = "*"
+freezegun = "*"
+gitpython = "*"
+toml = "*"
+markupsafe = "2.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.briefcase]
 author = 'Jimmy Girardet'
 author_email = "ijkl@netc.fr"
