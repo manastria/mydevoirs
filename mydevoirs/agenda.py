@@ -77,7 +77,7 @@ class JourWidget(BoxLayout):
     @property
     def nice_date(self):
         semaine = self.date.isocalendar()[1]
-        return self.date.strftime("%A %d %B %Y") + f" (semaine {semaine})"
+        return self.date.strftime("%A %d %B %Y") + f" (sem. {semaine})"
 
     def add_item(self):
         with db_session:
