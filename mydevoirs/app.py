@@ -61,6 +61,9 @@ class MyDevoirsApp(App):
         from mydevoirs.agenda import Agenda
         from mydevoirs.colorchooser import ColorChooser
         from mydevoirs.todo import Todo
+        from kivy.core.window import Window
+
+        Window.size = (1200, 800)  # Largeur, hauteur
 
         self.load_theme()
         self.sm = ScreenManager(transition=SlideTransition(direction="up"))
