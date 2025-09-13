@@ -1,0 +1,122 @@
+# .github/workflows/main.yml (vous pouvez le renommer)
+
+name: Test, Build et Release
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  # --- JOB 1: Lancer les tests sur toutes les plateformes ---
+  test:
+    name: Tester sur ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest] # Ajout de macOS pour être complet
+        python: ['3.11'] # Utiliser la version de votre pyproject.toml
+
+    env:
+      DISPLAY: ':99.0' # Pour Kivy sur Linux
+
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Installer Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Mettre en place un affichage virtuel (pour Kivy sur Linux)
+        if: runner.os == 'Linux'
+        run: /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1280x720x24 -ac +extension GLX
+
+      - name: Installer Poetry
+        run: pipx install poetry
+
+      - name: Installer les dépendances
+        run: poetry install
+      
+      - name: Lancer les tests (exemple avec pytest)
+        run: poetry run pytest
+
+      # L'étape de couverture de code (Codecov) irait ici
+      - name: Upload de la couverture de code
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # Utilise un secret !
+          fail_ci_if_error: true
+
+  # --- JOB 2: Construire les installeurs (uniquement pour les tags) ---
+  build:
+    name: Construire l'installeur pour ${{ matrix.os }}
+    # Condition: ne s'exécute que si un tag est poussé ET que les tests sont passés
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test # Dépend du succès des tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Mettre en place les dépendances système (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y language-pack-fr pulseaudio libmtdev1 xclip libgl1 libfontconfig1 libxrender1
+
+      - name: Installer Poetry
+        run: pipx install poetry
+
+      - name: Installer les dépendances du projet
+        run: poetry install
+
+      - name: Packager l'application avec Briefcase
+        run: poetry run briefcase package --no-sign # --no-sign est important pour le CI
+
+      - name: Uploader l'artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          # Briefcase génère le paquet dans un sous-dossier, on utilise un glob pattern
+          path: |
+            windows/**/*.msi
+            macOS/**/*.dmg
+            linux/**/*.AppImage
+
+  # --- JOB 3: Créer la Release GitHub (uniquement pour les tags) ---
+  create-release:
+    name: Créer la Release GitHub
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build # Dépend du succès des builds
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Télécharger tous les installeurs
+        uses: actions/download-artifact@v4
+        with:
+          path: installers # Sauvegarde tout dans un dossier "installers"
+          # Le pattern permet de matcher tous les artefacts commençant par "installer-"
+          pattern: installer-*
+          merge-multiple: true # Fusionne les artefacts dans le même dossier
+
+      - name: Créer la Release et attacher les fichiers
+        uses: softprops/action-gh-release@v1
+        with:
+          # Attache tous les fichiers .msi, .dmg, et .AppImage trouvés
+          files: installers/*
