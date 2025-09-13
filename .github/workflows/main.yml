@@ -47,6 +47,13 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           echo "DISPLAY=:99" >> $GITHUB_ENV
 
+      - name: Mettre en place l'environnement pour Kivy et Locale (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          echo "KIVY_WINDOW=mock" >> $GITHUB_ENV
+          echo "LANG=fr_FR.UTF-8" >> $GITHUB_ENV
+          echo "LC_ALL=fr_FR.UTF-8" >> $GITHUB_ENV
+
       - name: Installer Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
@@ -57,7 +64,7 @@ jobs:
         run: /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1280x720x24 -ac +extension GLX
 
       - name: Installer Poetry
-        run: pipx install poetry
+        uses: snok/install-poetry@v1
 
       - name: Installer les dépendances
         run: poetry install
@@ -97,7 +104,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y language-pack-fr pulseaudio libmtdev1 xclip libgl1 libfontconfig1 libxrender1
 
       - name: Installer Poetry
-        run: pipx install poetry
+        run: pip install poetry
 
       - name: Installer les dépendances du projet
         run: poetry install
