@@ -1,1 +1,0 @@
-Exécution du projet avec `poetry run python -m mydevoirs`.
