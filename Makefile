@@ -5,13 +5,11 @@ MODULE:=mydevoirs
 all: dev test
 
 install:
-	python3.7 -m venv .venv
-	.venv/bin/pip install -U pip
-	.venv/bin/pip install -r requirements.txt
-	.venv/bin/briefcase dev
+	poetry install
+	poetry run briefcase dev
 
 devtools:
-	.venv/bin/pip install -U ipython pdbpp autoflake toml markdown
+	poetry run pip install -U ipython pdbpp autoflake toml markdown
 
 dev:  install devtools 
 
@@ -54,13 +52,12 @@ clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and 
 clean-full: clean clean-venv
 
 clean-build: ## remove build artifacts
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
-	find . -name 'requirements*' -exec rm -f {} +
-	rm -rf docs/_build/
+rm -fr build/
+rm -fr dist/
+rm -fr .eggs/
+find . -name '*.egg-info' -exec rm -fr {} +
+find . -name '*.egg' -exec rm -f {} +
+rm -rf docs/_build/
 
 
 

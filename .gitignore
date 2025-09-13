@@ -159,3 +159,6 @@ pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/python,virtualenv,sublimetext
 /linux/
+
+docs/dev.md
+WINDOWS_INSTALLER.md

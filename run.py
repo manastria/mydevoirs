@@ -166,9 +166,8 @@ def cmd_dev(*args, **kwargs):
 
 
 def cmd_install(*args, **kwargs):
-    runCommand(f"python -m pip install -U pip")
-    runCommand(f"pip install -r requirements.txt")
-    runCommand(f"python run.py install_from_require")
+    runCommand("poetry install")
+    runCommand("python run.py install_from_require")
 
 
 def cmd_install_from_require(*args, **kwargs):
@@ -195,7 +194,7 @@ def cmd_version(*args, **kwargs):
     with open("pyproject.toml") as ff:
         _, appconfig = parse_config(ff, sys.platform, "")
     version = appconfig[PACKAGE_NAME]["version"]
-    vcs.create_tag("v"+version)
+    vcs.create_tag("v" + version)
     print(f"tag {version} créé")
 
 

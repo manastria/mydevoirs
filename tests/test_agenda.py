@@ -119,7 +119,7 @@ class JourWidgetTestCase(MyDevoirsTestCase):
 
     def test_nice_date(self):
         jour = JourWidget(datetime.date(2019, 11, 12))
-        assert jour.ids.titre_jour.text == "mardi 12 novembre 2019"
+        assert jour.ids.titre_jour.text == "mardi 12 novembre 2019 (semaine 46)"
 
     def test_add(self):
         day = f_jour()
@@ -398,3 +398,16 @@ class TestAgendaScreen(MyDevoirsTestCase):
         b = Agenda()
         b.go_date(datetime.date(2012, 3, 2))
         assert b.carousel.date == datetime.date(2012, 3, 2)
+
+    def test_go_to_week_input(self):
+        with freezegun.freeze_time("2020-02-01"):
+            b = Agenda()
+        b.goto_input.text = "12"
+        b._on_goto_input(b.goto_input)
+        assert b.carousel.date == datetime.date(2020, 3, 16)
+
+    def test_go_to_date_input(self):
+        b = Agenda()
+        b.goto_input.text = "2020-07-06"
+        b._on_goto_input(b.goto_input)
+        assert b.carousel.date == datetime.date(2020, 7, 6)

@@ -1,5 +1,8 @@
-# ATTENTION MyDevoirs n'est plus maintenu. Vous pouvez toujours l'utiliser mais je ne pourrai vous apporter aucune aide en cas de problème. Merci à tous les utilisateurs pour m'avoir fait confiance pendant toutes ces années.
-
+> ⚠️ **Projet repris et maintenu**
+>
+> Ce dépôt est un fork du projet original [mydevoirs par jgirardet](https://github.com/jgirardet/mydevoirs), qui est maintenant archivé et n'est plus maintenu.
+>
+> Cette version est activement développée pour corriger les bugs et ajouter de nouvelles fonctionnalités. Pour toute suggestion ou rapport de bug, merci d'ouvrir une "issue" sur ce dépôt.
 
 # MyDevoirs : La prise de devoirs sur ordinateur enfin simple !!!
 
@@ -20,7 +23,7 @@ A priori les enfants qui ont besoin d'un ordiateur à l'école donc les Dys en g
 ## Comment l'installer ?
 
 Pour l'instant disponible sous Windows et Linux.
-[Télécharger MyDevoirs](https://github.com/jgirardet/mydevoirs/releases/tag/latest)
+[Télécharger MyDevoirs](https://github.com/manastria/mydevoirs/releases/latest)
 
 - Version Windows : fichier .msi (installateur)
 - Version Linux : fichier .AppImage (exécutable toutes distros)
@@ -73,7 +76,7 @@ Les raccourcis claviers sont à utliser quand le curseur est dans une zone de te
 
 ## Au secours j'ai un problème/ il manque une fonctionnalité
 
-Il suffit de laisser un message/issue sur [Github issue](https://github.com/jgirardet/mydevoirs/issues). Il faut créer un compte github gratuit pour pouvoir laisser un message.
+Il suffit de laisser un message/issue sur [Github issue](https://github.com/manastria/mydevoirs/issues). Il faut créer un compte github gratuit pour pouvoir laisser un message.
 
 ## Comment synchroniser MyDevoirs sur plusieurs ordinateurs ?
 
@@ -119,21 +122,8 @@ IL EST DONC IMPORTANT, POUR UN MÊME FICHIER SYNCHRONISÉ, DE N'OUVRIR MYDEVOIRS
 
 ## MyDevoirs c'est gratuit ?
 
-MyDevoirs est un logiciel libre (la code source est disponible) sous licence GPL3.
+MyDevoirs est un logiciel libre (le code source est disponible) sous licence LGPLv3.
 
 ## Remeciements
 
 Je remercie tous les gens impliqués dans la réalisation des technologies utlisées et plus particuliérement l'équipe de dévelopeurs de [Kivy](https://www.kivy.org) et [Ponyorm](https://ponyorm.org) pour leur disponibilité pour repondre aux questions.
-
-## ChangeLog
-
-- 1.2.1:
-  - ajout d'un theme "contrast"
-- 1.1.0:
-  - il est désormais possible de choisir le premier jour de la semaine.
-- 1.0.0:
-  - ajout suppression de matière
-- 0.7.0:
-  - ajout du lien d'aide
-  - ajout de de la personalisation des couleurs et des matières.
-  - dev : ajout d'un mode debug et test pour ne pas mélanger les fichiers de configuration et la ddb.
