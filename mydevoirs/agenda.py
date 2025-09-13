@@ -6,9 +6,11 @@ from kivy.properties import NumericProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.carousel import Carousel
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
 from pony.orm import db_session
+from kivy.clock import Clock
 
 from mydevoirs.constants import SEMAINE
 from mydevoirs.database import db
@@ -201,6 +203,18 @@ class Agenda(Screen):
         self.layout = BoxLayout(orientation="vertical")
         self.add_widget(self.layout)
 
+        # Header with current week number + search input on the same line
+        self.header = BoxLayout(orientation="horizontal", size_hint_y=None, height=30, spacing=5)
+
+        current_week = datetime.date.today().isocalendar()[1]
+        self.week_label = Label(text=f"Sem. {current_week}", size_hint_x=None)
+        # Adjust label width to fit its content
+        self.week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
+
+        # Displayed week (from the visible agenda week)
+        self.display_week_label = Label(text="", size_hint_x=None)
+        self.display_week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
+
         self.goto_input = TextInput(
             hint_text="Semaine ou date YYYY-MM-DD",
             multiline=False,
@@ -208,15 +222,24 @@ class Agenda(Screen):
             height=30,
         )
         self.goto_input.bind(on_text_validate=self._on_goto_input)
-        self.layout.add_widget(self.goto_input)
+
+        self.header.add_widget(self.week_label)
+        self.header.add_widget(self.display_week_label)
+        self.header.add_widget(self.goto_input)
+        self.layout.add_widget(self.header)
 
         self.carousel = CarouselWidget()
+        self.carousel.bind(index=self._on_carousel_index)
         self.layout.add_widget(self.carousel)
+        # Initialize displayed week label according to current carousel
+        self._refresh_display_week()
 
     def go_date(self, date=None):
         self.layout.remove_widget(self.carousel)
         self.carousel = CarouselWidget(date)
+        self.carousel.bind(index=self._on_carousel_index)
         self.layout.add_widget(self.carousel)
+        self._refresh_display_week()
 
     def _on_goto_input(self, instance):
         text = instance.text.strip()
@@ -232,3 +255,16 @@ class Agenda(Screen):
         except ValueError:
             pass
         instance.text = ""
+
+    # --- internal helpers for week label syncing ---
+    def _refresh_display_week(self, *args):
+        try:
+            wk = self.carousel.date.isocalendar()[1]
+            self.display_week_label.text = f"sem. {wk}"
+        except Exception:
+            # Best-effort; avoid hard failures in UI building
+            self.display_week_label.text = ""
+
+    def _on_carousel_index(self, *args):
+        # Wait a tick so CarouselWidget.on_index updates its .date first
+        Clock.schedule_once(lambda dt: self._refresh_display_week(), 0)
