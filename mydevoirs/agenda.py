@@ -7,10 +7,12 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.carousel import Carousel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
 from pony.orm import db_session
 from kivy.clock import Clock
+from kivy.graphics import Color, RoundedRectangle
 
 from mydevoirs.constants import SEMAINE
 from mydevoirs.database import db
@@ -207,9 +209,31 @@ class Agenda(Screen):
         self.header = BoxLayout(orientation="horizontal", size_hint_y=None, height=30, spacing=5)
 
         current_week = datetime.date.today().isocalendar()[1]
-        self.week_label = Label(text="", size_hint_x=None)
+        # Today badge: calendar icon + bold text on colored background
+        self.today_badge = BoxLayout(orientation="horizontal", padding=(8, 4), spacing=5, size_hint_x=None, height=30)
+        with self.today_badge.canvas.before:
+            Color(0.2, 0.6, 1, 0.20)
+            self._today_bg = RoundedRectangle(radius=[8, 8, 8, 8], pos=self.today_badge.pos, size=self.today_badge.size)
+        self.today_badge.bind(pos=lambda inst, val: setattr(self._today_bg, "pos", inst.pos))
+        self.today_badge.bind(size=lambda inst, val: setattr(self._today_bg, "size", inst.size))
+
+        self.today_icon = Image(size_hint=(None, None), size=(20, 20))
+        try:
+            # Lazy import to avoid circulars at module import time
+            from mydevoirs.utils import datas  # type: ignore
+
+            self.today_icon.source = datas.get("icon_agenda", "")
+        except Exception:
+            self.today_icon.source = ""
+
+        self.week_label = Label(text="", size_hint_x=None, markup=True)
         # Adjust label width to fit its content
         self.week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
+        # Compose badge
+        self.today_badge.add_widget(self.today_icon)
+        self.today_badge.add_widget(self.week_label)
+        # Fit badge to children
+        self.today_badge.bind(minimum_width=self.today_badge.setter("width"))
 
         # Displayed week (from the visible agenda week)
         self.display_week_label = Label(text="", size_hint_x=None)
@@ -223,7 +247,7 @@ class Agenda(Screen):
         )
         self.goto_input.bind(on_text_validate=self._on_goto_input)
 
-        self.header.add_widget(self.week_label)
+        self.header.add_widget(self.today_badge)
         self.header.add_widget(self.display_week_label)
         self.header.add_widget(self.goto_input)
         self.layout.add_widget(self.header)
@@ -233,8 +257,8 @@ class Agenda(Screen):
         self.layout.add_widget(self.carousel)
         # Initialize displayed week label according to current carousel
         self._refresh_display_week()
-        # Initialize current (today) week label with A/B info
-        self.week_label.text = self._format_week_label(current_week)
+        # Initialize current (today) badge with date + A/B info
+        self._refresh_today_badge()
 
     def go_date(self, date=None):
         self.layout.remove_widget(self.carousel)
@@ -278,3 +302,12 @@ class Agenda(Screen):
     def _on_carousel_index(self, *args):
         # Wait a tick so CarouselWidget.on_index updates its .date first
         Clock.schedule_once(lambda dt: self._refresh_display_week(), 0)
+
+    def _refresh_today_badge(self):
+        try:
+            today = datetime.date.today()
+            wk = today.isocalendar()[1]
+            dmy = today.strftime("%a %d/%m")
+            self.week_label.text = f"[b]Auj. {dmy} — {self._format_week_label(wk)}[/b]"
+        except Exception:
+            pass
