@@ -207,7 +207,7 @@ class Agenda(Screen):
         self.header = BoxLayout(orientation="horizontal", size_hint_y=None, height=30, spacing=5)
 
         current_week = datetime.date.today().isocalendar()[1]
-        self.week_label = Label(text=f"Sem. {current_week}", size_hint_x=None)
+        self.week_label = Label(text="", size_hint_x=None)
         # Adjust label width to fit its content
         self.week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
 
@@ -216,7 +216,7 @@ class Agenda(Screen):
         self.display_week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
 
         self.goto_input = TextInput(
-            hint_text="Semaine ou date YYYY-MM-DD",
+            hint_text="Semaine ou date DD/MM/YYYY",
             multiline=False,
             size_hint_y=None,
             height=30,
@@ -233,6 +233,8 @@ class Agenda(Screen):
         self.layout.add_widget(self.carousel)
         # Initialize displayed week label according to current carousel
         self._refresh_display_week()
+        # Initialize current (today) week label with A/B info
+        self.week_label.text = self._format_week_label(current_week)
 
     def go_date(self, date=None):
         self.layout.remove_widget(self.carousel)
@@ -250,17 +252,25 @@ class Agenda(Screen):
                 year = datetime.date.today().year
                 date = datetime.date.fromisocalendar(year, int(text), 1)
             else:
-                date = datetime.datetime.strptime(text, "%Y-%m-%d").date()
+                # Try new format DD/MM/YYYY first, then legacy YYYY-MM-DD
+                try:
+                    date = datetime.datetime.strptime(text, "%d/%m/%Y").date()
+                except ValueError:
+                    date = datetime.datetime.strptime(text, "%Y-%m-%d").date()
             self.go_date(date)
         except ValueError:
             pass
         instance.text = ""
 
     # --- internal helpers for week label syncing ---
+    @staticmethod
+    def _format_week_label(week_number: int) -> str:
+        return f"Sem. {week_number} (A)" if week_number % 2 == 1 else f"Sem. {week_number} (B)"
+
     def _refresh_display_week(self, *args):
         try:
             wk = self.carousel.date.isocalendar()[1]
-            self.display_week_label.text = f"sem. {wk}"
+            self.display_week_label.text = self._format_week_label(wk)
         except Exception:
             # Best-effort; avoid hard failures in UI building
             self.display_week_label.text = ""
