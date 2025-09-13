@@ -162,3 +162,4 @@ pip-selfcheck.json
 
 docs/dev.md
 WINDOWS_INSTALLER.md
+/logs/

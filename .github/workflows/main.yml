@@ -7,6 +7,8 @@ on:
   pull_request:
     branches: [ master, dev ]
 
+  workflow_dispatch:
+
 permissions:
   contents: write
 
@@ -91,14 +93,14 @@ jobs:
       - name: Install WiX Toolset 3.x
         shell: powershell
         run: |
-          choco install wixtoolset --version=3.14.0.6526 -y
+          choco install wixtoolset --allow-downgrade --version=3.14.1 -y
           echo "WIX=C:\\Program Files (x86)\\WiX Toolset v3.14" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Package app with Briefcase
         run: |
           poetry run briefcase create windows
           poetry run briefcase build windows
-          poetry run briefcase package windows --no-sign
+          poetry run briefcase package windows
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

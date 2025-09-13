@@ -62,8 +62,14 @@ class MyDevoirsApp(App):
         from mydevoirs.colorchooser import ColorChooser
         from mydevoirs.todo import Todo
         from kivy.core.window import Window
-
-        Window.size = (1200, 800)  # Largeur, hauteur
+        # In packaged environments, a missing window provider can yield None.
+        # Fallback to graphics config to avoid crash and let Kivy create window later.
+        if Window is not None:
+            Window.size = (1200, 800)  # Largeur, hauteur
+        else:  # pragma: no cover_all
+            from kivy.config import Config
+            Config.set("graphics", "width", 1200)
+            Config.set("graphics", "height", 800)
 
         self.load_theme()
         self.sm = ScreenManager(transition=SlideTransition(direction="up"))
