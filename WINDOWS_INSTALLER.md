@@ -6,19 +6,19 @@ Pour générer un installateur Windows pour MyDevoirs :
 
 Briefcase 0.3.x utilise le WiX Toolset (v3.x) pour produire l'installateur MSI. WiX n'est pas un paquet pip ; c'est un outil natif Windows à installer séparément.
 
-1. Installer le « WiX Toolset v3.x » (3.11 ou 3.14.x) depuis le site officiel.
+1. Installer le « WiX Toolset v3.x » (3.11 ou 3.14.x) depuis le site officiel <https://github.com/wixtoolset/wix3/releases>.
 2. Définir la variable d'environnement `WIX` vers le dossier d'installation de WiX (exemple par défaut) : `C:\Program Files (x86)\WiX Toolset v3.11`
 
    PowerShell (choisir User ou Machine) :
    ```powershell
    # Pour l'utilisateur courant
-   [System.Environment]::SetEnvironmentVariable('WIX','C:\\Program Files (x86)\\WiX Toolset v3.11','User')
+   [System.Environment]::SetEnvironmentVariable('WIX','C:\\Program Files (x86)\\WiX Toolset v3.14','User')
 
    # Pour toute la machine (peut nécessiter un PowerShell admin)
-   [System.Environment]::SetEnvironmentVariable('WIX','C:\\Program Files (x86)\\WiX Toolset v3.11','Machine')
+   [System.Environment]::SetEnvironmentVariable('WIX','C:\\Program Files (x86)\\WiX Toolset v3.14','Machine')
    ```
 
-3. Ouvrir un nouveau terminal puis vérifier :
+3. **Ouvrir un nouveau terminal** puis vérifier :
    ```powershell
    echo $env:WIX
    Test-Path "$env:WIX\bin\candle.exe"   # doit retourner True
@@ -32,7 +32,7 @@ Notes :
 
 1. Installer les dépendances :
    ```bash
-   poetry install
+   poetry install --with dev
    ```
 2. Créer l'application pour Windows :
    ```bash
