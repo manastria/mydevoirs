@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: [ master, dev ]
-    tags: [ 'v*.*.*' ]
+#    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ master, dev ]
 
@@ -91,7 +91,7 @@ jobs:
       - name: Install WiX Toolset 3.x
         shell: powershell
         run: |
-          choco install wixtoolset --version=3.14.0.6526 -y
+          choco install wixtoolset --allow-downgrade --version=3.14.0.6526 -y
           echo "WIX=C:\\Program Files (x86)\\WiX Toolset v3.14" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Package app with Briefcase
