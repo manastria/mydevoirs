@@ -64,7 +64,7 @@ jobs:
         run: /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1280x720x24 -ac +extension GLX
 
       - name: Installer Poetry
-        uses: snok/install-poetry@v1
+        run: pip install poetry==1.8.2
 
       - name: Installer les dépendances
         run: poetry install
