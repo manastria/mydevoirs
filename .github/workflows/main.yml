@@ -1,145 +1,116 @@
-# .github/workflows/main.yml (vous pouvez le renommer)
-
-name: Test, Build et Release
+name: CI
 
 on:
   push:
-    branches:
-      - master
-      - dev
-    tags:
-      - 'v*.*.*'
+    branches: [ master, dev ]
+    tags: [ 'v*.*.*' ]
   pull_request:
-    branches:
-      - master
-      - dev
+    branches: [ master, dev ]
+
+permissions:
+  contents: write
 
 jobs:
-  # --- JOB 1: Lancer les tests sur toutes les plateformes ---
   test:
-    name: Tester sur ${{ matrix.os }} / Python ${{ matrix.python }}
+    name: Tests on ${{ matrix.os }} / Python ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest] # Ajout de macOS pour être complet
-        python: ['3.11'] # Utiliser la version de votre pyproject.toml
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.11']
 
     env:
-      DISPLAY: ':99.0' # Pour Kivy sur Linux
+      KIVY_WINDOW: mock
+      KIVY_GL_BACKEND: mock
 
     steps:
-      - name: Récupérer le code source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Mettre en place la locale (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y locales
-          sudo locale-gen fr_FR.UTF-8 # On peut mettre fr_FR pour être cohérent
-          echo "LANG=fr_FR.UTF-8" >> $GITHUB_ENV
-          echo "LC_ALL=fr_FR.UTF-8" >> $GITHUB_ENV
-      
-      - name: Mettre en place l'écran virtuel Xvfb (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y xvfb
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
-
-      - name: Mettre en place l'environnement pour Kivy et Locale (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          echo "KIVY_WINDOW=mock" >> $GITHUB_ENV
-          echo "LANG=fr_FR.UTF-8" >> $GITHUB_ENV
-          echo "LC_ALL=fr_FR.UTF-8" >> $GITHUB_ENV
-
-      - name: Installer Python ${{ matrix.python }}
+      - name: Setup Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Mettre en place un affichage virtuel (pour Kivy sur Linux)
-        if: runner.os == 'Linux'
-        run: /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1280x720x24 -ac +extension GLX
-
-      - name: Installer Poetry
+      - name: Install Poetry
         run: pip install poetry==1.8.2
 
-      - name: Installer les dépendances
-        run: poetry install
-      
-      - name: Lancer les tests (exemple avec pytest)
-        run: poetry run pytest
+      - name: Install dependencies
+        run: poetry install --with dev
 
-      # L'étape de couverture de code (Codecov) irait ici
-      - name: Upload de la couverture de code
-        uses: codecov/codecov-action@v3
+      - name: Run tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update && sudo apt-get install -y xvfb
+          xvfb-run -a poetry run pytest -q
+
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: poetry run pytest -q
+
+      - name: Upload coverage (Codecov)
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
+        uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # Utilise un secret !
-          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
-  # --- JOB 2: Construire les installeurs (uniquement pour les tags) ---
   build:
-    name: Construire l'installeur pour ${{ matrix.os }}
-    # Condition: ne s'exécute que si un tag est poussé ET que les tests sont passés
+    name: Build Windows installer
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: test # Dépend du succès des tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    needs: test
+    runs-on: windows-latest
 
     steps:
-      - name: Récupérer le code source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Installer Python 3.11
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
-      - name: Mettre en place les dépendances système (Linux)
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y language-pack-fr pulseaudio libmtdev1 xclip libgl1 libfontconfig1 libxrender1
 
-      - name: Installer Poetry
-        run: pip install poetry
+      - name: Install Poetry
+        run: pip install poetry==1.8.2
 
-      - name: Installer les dépendances du projet
-        run: poetry install
+      - name: Install project dependencies
+        run: poetry install --with dev
 
-      - name: Packager l'application avec Briefcase
-        run: poetry run briefcase package --no-sign # --no-sign est important pour le CI
+      - name: Install WiX Toolset 3.x
+        shell: powershell
+        run: |
+          choco install wixtoolset --version=3.14.0.6526 -y
+          echo "WIX=C:\\Program Files (x86)\\WiX Toolset v3.14" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Uploader l'artefact
+      - name: Package app with Briefcase
+        run: |
+          poetry run briefcase create windows
+          poetry run briefcase build windows
+          poetry run briefcase package windows --no-sign
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: installer-${{ matrix.os }}
-          # Briefcase génère le paquet dans un sous-dossier, on utilise un glob pattern
+          name: installer-windows
           path: |
-            windows/**/*.msi
-            macOS/**/*.dmg
-            linux/**/*.AppImage
+            **/*.msi
 
-  # --- JOB 3: Créer la Release GitHub (uniquement pour les tags) ---
   create-release:
-    name: Créer la Release GitHub
+    name: Create GitHub Release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build # Dépend du succès des builds
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Télécharger tous les installeurs
+      - name: Download installer artifacts
         uses: actions/download-artifact@v4
         with:
-          path: installers # Sauvegarde tout dans un dossier "installers"
-          # Le pattern permet de matcher tous les artefacts commençant par "installer-"
+          path: installers
           pattern: installer-*
-          merge-multiple: true # Fusionne les artefacts dans le même dossier
+          merge-multiple: true
 
-      - name: Créer la Release et attacher les fichiers
+      - name: Create Release and upload files
         uses: softprops/action-gh-release@v1
         with:
-          # Attache tous les fichiers .msi, .dmg, et .AppImage trouvés
-          files: installers/*
+          files: installers/**/*
+
