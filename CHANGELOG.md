@@ -9,6 +9,12 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ### Modifié (Changed)
 - La fenêtre s'adapte à l'écran : elle s'ouvre maximisée au premier lancement, puis retrouve la taille qu'on lui a laissée en fermant MyDevoirs. Sur un petit écran (portable en 1366×768), le bas de l'agenda n'est plus caché.
+- L'en-tête de l'agenda n'affiche plus qu'une semaine, celle qu'on regarde : son numéro, sa lettre, ses dates et sa position par rapport à aujourd'hui (« cette semaine », « dans 2 semaines »...). Un bouton « Aujourd'hui » y ramène quand on consulte une autre semaine.
+- Le jour d'aujourd'hui est mis en couleur dans l'agenda. Les titres des jours n'indiquent plus la semaine ni l'année, déjà présentes dans l'en-tête.
+
+### Corrigé (Fixed)
+- Si MyDevoirs reste ouvert après minuit, le jour mis en couleur suit le changement de date.
+- Quand la semaine commence un autre jour que le lundi, le numéro et la lettre de la semaine correspondent bien aux jours affichés.
 
 ---
 

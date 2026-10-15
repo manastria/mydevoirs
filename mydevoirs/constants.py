@@ -39,6 +39,7 @@ THEMES = {
         "card_texte_size": "16sp",
         "titre_jour": [0.2, 0.4, 0, 1],
         "progression": [0.92, 0.008, 0.008, 1],
+        "aujourdhui": [0.62, 0.78, 0.95, 1],
         "spinner_text_color": [0, 0, 0, 1],
         "police": str(BASE_DIR / "data" / "fonts" / "Verdana.ttf")
     },
@@ -50,6 +51,7 @@ THEMES = {
         "card_texte_size": "16sp",
         "titre_jour": [0.2, 0.4, 0, 1],
         "progression": [0.92, 0.008, 0.008, 1],
+        "aujourdhui": [0.62, 0.78, 0.95, 1],
         "spinner_text_color": [0, 0, 0, 1],
         "police": str(BASE_DIR / "data" / "fonts" / "OpenDyslexic-Regular.ttf")
     },    
@@ -61,6 +63,7 @@ THEMES = {
         "card_texte_size": "18sp",
         "titre_jour": [0.2, 0.4, 0, 1],
         "progression": [1, 1, 1, 1],
+        "aujourdhui": [0.2, 0.4, 0, 1],
         "spinner_text_color": [0, 0, 0, 1],
         "police": str(BASE_DIR / "data" / "fonts" / "Verdana.ttf")
     },
@@ -72,6 +75,7 @@ THEMES = {
         "card_texte_size": "18sp",
         "titre_jour": [0.2, 0.4, 0, 1],
         "progression": [1, 1, 1, 1],
+        "aujourdhui": [0.2, 0.4, 0, 1],
         "spinner_text_color": [0, 0, 0, 1],
         "police": str(BASE_DIR / "data" / "fonts" / "OpenDyslexic-Regular.ttf")
     },

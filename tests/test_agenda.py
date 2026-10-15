@@ -119,7 +119,8 @@ class JourWidgetTestCase(MyDevoirsTestCase):
 
     def test_nice_date(self):
         jour = JourWidget(datetime.date(2019, 11, 12))
-        assert jour.ids.titre_jour.text == "mardi 12 novembre 2019 (semaine 46)"
+        assert jour.ids.titre_jour.text == "mardi 12 novembre"
+        assert JourWidget(datetime.date(2019, 11, 1)).nice_date == "vendredi 1er novembre"
 
     def test_add(self):
         day = f_jour()
