@@ -12,6 +12,16 @@ Briefcase ne construit pas de `.msi` depuis Linux ni WSL : il faut le faire sous
 
 Inutile d'installer WiX. Quand la variable d'environnement `WIX` n'existe pas, Briefcase 0.3.18 télécharge lui-même WiX 3.14 dans son dossier de données. La CI, elle, l'installe avec `choco` et définit `WIX`.
 
+Si le téléchargement automatique échoue (réseau restreint, proxy), installer WiX Toolset v3.x (3.11 ou 3.14.x, **pas** v4, non supporté par Briefcase 0.3.x) depuis https://github.com/wixtoolset/wix3/releases, puis définir `WIX` vers son dossier d'installation :
+
+```powershell
+[System.Environment]::SetEnvironmentVariable('WIX', 'C:\Program Files (x86)\WiX Toolset v3.14', 'User')
+```
+
+Ouvrir un nouveau terminal puis vérifier : `Test-Path "$env:WIX\bin\candle.exe"` doit retourner `True`.
+
+Côté Kivy, `[tool.briefcase.app.mydevoirs.windows]` dans `pyproject.toml` doit garder `kivy_deps.sdl2`, `kivy_deps.glew` et `kivy_deps.angle` (DLLs SDL2/GLEW/ANGLE) ainsi que `pywin32` (module `win32file` pour le filechooser). Sans eux : `Unable to find any valuable Window provider / _window_sdl2` à l'exécution (voir Dépannage).
+
 ## 1. Récupérer les sources sur le disque Windows
 
 Ne pas construire depuis `\\wsl.localhost\...` : les environnements virtuels et WiX supportent mal les chemins réseau.
@@ -75,3 +85,17 @@ Pour essayer une modification du code sous Windows, le `.msi` n'est pas nécessa
 - `poetry run briefcase run windows` lance l'application construite par `build`, sans l'installer.
 
 Le `.msi` ne sert qu'à tester l'installation elle-même : raccourcis, désinstallation, mise à jour par-dessus une version précédente.
+
+## Dépannage
+
+- **`Unable to find any valuable Window provider / _window_sdl2`** : DLL SDL2/ANGLE/GLEW manquantes dans le bundle. Vérifier la section `requires` de `pyproject.toml` (voir Prérequis), puis :
+  ```powershell
+  poetry run briefcase update windows --requirements
+  poetry run briefcase build windows
+  ```
+- **Signature** : `--no-sign` n'est pas un argument valide sur Briefcase 0.3.18. Omettre simplement les options de signature (ou utiliser `--adhoc-sign`, voir étape 3).
+- **`No module named stub`** (le log affiche `Running app module: stub` au lieu de `mydevoirs`) : `briefcase run windows` ne relance `build` que si le binaire n'existe pas encore. Si `mydevoirs.exe` existe déjà mais n'a jamais été retouché par `rcedit` (installation fraîche de l'outil, cache Briefcase nettoyé, `create` lancé sans `build` ensuite), il garde le nom de module par défaut du binaire *stub* et ne démarre pas. Il suffit de lancer `build` explicitement avant `run` :
+  ```powershell
+  poetry run briefcase build windows
+  poetry run briefcase run windows
+  ```
