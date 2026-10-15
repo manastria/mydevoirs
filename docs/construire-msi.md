@@ -30,6 +30,7 @@ Pour une mise à jour : `git pull` dans ce dossier.
 À faire une seule fois :
 
 ```powershell
+py install 3.11
 py -3.11 -m pip install --user pipx
 py -3.11 -m pipx ensurepath
 py -3.11 -m pipx install poetry
