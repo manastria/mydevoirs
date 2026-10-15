@@ -14,6 +14,7 @@ from pony.orm import db_session
 from kivy.clock import Clock
 from kivy.graphics import Color, RoundedRectangle
 
+from mydevoirs.alternance import lettre_configuree
 from mydevoirs.constants import SEMAINE
 from mydevoirs.database import db
 from mydevoirs.itemwidget import ItemWidget
@@ -266,6 +267,8 @@ class Agenda(Screen):
         self.carousel.bind(index=self._on_carousel_index)
         self.layout.add_widget(self.carousel)
         self._refresh_display_week()
+        # Les réglages d'alternance ont pu changer (go_agenda)
+        self._refresh_today_badge()
 
     def _on_goto_input(self, instance):
         text = instance.text.strip()
@@ -288,13 +291,14 @@ class Agenda(Screen):
 
     # --- internal helpers for week label syncing ---
     @staticmethod
-    def _format_week_label(week_number: int) -> str:
-        return f"Sem. {week_number} (A)" if week_number % 2 == 1 else f"Sem. {week_number} (B)"
+    def _format_week_label(day: datetime.date) -> str:
+        label = f"Sem. {day.isocalendar()[1]}"
+        lettre = lettre_configuree(day)
+        return f"{label} ({lettre})" if lettre else label
 
     def _refresh_display_week(self, *args):
         try:
-            wk = self.carousel.date.isocalendar()[1]
-            self.display_week_label.text = self._format_week_label(wk)
+            self.display_week_label.text = self._format_week_label(self.carousel.date)
         except Exception:
             # Best-effort; avoid hard failures in UI building
             self.display_week_label.text = ""
@@ -306,8 +310,7 @@ class Agenda(Screen):
     def _refresh_today_badge(self):
         try:
             today = datetime.date.today()
-            wk = today.isocalendar()[1]
             dmy = today.strftime("%a %d/%m")
-            self.week_label.text = f"[b]Auj. {dmy} — {self._format_week_label(wk)}[/b]"
+            self.week_label.text = f"[b]Auj. {dmy} — {self._format_week_label(today)}[/b]"
         except Exception:
             pass

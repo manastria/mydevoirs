@@ -109,10 +109,44 @@ jobs:
           path: |
             **/*.msi
 
+  build-linux:
+    name: Build Linux AppImage
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        run: pip install poetry==1.8.2
+
+      - name: Install project dependencies
+        run: poetry install --with dev
+
+      # Briefcase 0.3.18 construit l'AppImage dans un conteneur Docker (ubuntu:18.04).
+      - name: Package app with Briefcase
+        run: |
+          poetry run briefcase create linux appimage
+          poetry run briefcase build linux appimage
+          poetry run briefcase package linux appimage
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-linux
+          path: dist/*.AppImage
+
   create-release:
     name: Create GitHub Release
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    # La release Windows ne doit pas dépendre du succès de la construction Linux.
+    if: ${{ startsWith(github.ref, 'refs/tags/v') && !cancelled() && needs.build.result == 'success' }}
+    needs: [build, build-linux]
     runs-on: ubuntu-latest
 
     steps:

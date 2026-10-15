@@ -20,6 +20,7 @@ from mydevoirs.custom_setting import (
     SettingCustomConfigFilePath,
     SettingFilePath,
     SettingLabel,
+    SettingSemaineCourante,
 )
 from mydevoirs.database import init_database
 from mydevoirs.settings import DEFAULT_SETTINGS, SETTING_PANELS
@@ -110,6 +111,7 @@ class MyDevoirsApp(App):
         settings.register_type("filepath", SettingFilePath)
         settings.register_type("configfilepath", SettingCustomConfigFilePath)
         settings.register_type("label", SettingLabel)
+        settings.register_type("semainecourante", SettingSemaineCourante)
         for pan in SETTING_PANELS:
             settings.add_json_panel(pan[0], self.config, data=pan[1])
 

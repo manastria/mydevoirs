@@ -5,6 +5,17 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [1.3.1] - 2026-10-15
+
+### Ajouté (Added)
+- Semaines A/B réglables dans les paramètres (section « Semaines A/B ») : activer ou non l'alternance, choisir les libellés (« A, B », « 1, 2, 3 »...) et indiquer la lettre de la semaine en cours.
+- Version Linux : un fichier `.AppImage` est publié avec chaque version, à côté de l'installateur Windows.
+
+### Corrigé (Fixed)
+- Les semaines A et B ne se décalent plus au changement d'année : le 4 janvier 2027 est bien une semaine B, après la semaine A du 28 décembre 2026.
+
+---
+
 ## [1.3.0] - 2025-09-13
 
 Ceci est la première version publiée après la reprise du projet par [manastria](https://github.com/manastria).

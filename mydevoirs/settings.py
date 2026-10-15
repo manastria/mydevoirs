@@ -1,6 +1,7 @@
 import json
 from importlib.metadata import metadata
 
+from mydevoirs.alternance import LIBELLES_PAR_DEFAUT, REFERENCE_PAR_DEFAUT
 from mydevoirs.constants import DDB_FILENAME, VERSION, SEMAINE, THEMES
 from mydevoirs.utils import get_dir
 
@@ -82,6 +83,29 @@ AGENDA_PANEL = [
         "section": "agenda",
         "key": "auto_next_week",
     },
+    {"type": "title", "title": "Semaines A/B"},
+    {
+        "type": "bool",
+        "title": "Alternance des semaines",
+        "desc": "Affiche la lettre de la semaine (A, B...) à côté de son numéro",
+        "section": "agenda",
+        "key": "alternance",
+    },
+    {
+        "type": "string",
+        "title": "Libellés des semaines",
+        "desc": "Dans l'ordre, séparés par des virgules : « A, B » ou « 1, 2, 3 ». "
+        "Vérifiez ensuite la semaine en cours.",
+        "section": "agenda",
+        "key": "alternance_libelles",
+    },
+    {
+        "type": "semainecourante",
+        "title": "Semaine en cours",
+        "desc": "Choisissez la lettre de cette semaine : les autres en sont déduites",
+        "section": "agenda",
+        "key": "alternance_reference",
+    },
     {"type": "title", "title": "Choisir le thème"},
     {
         "type": "options",
@@ -113,6 +137,9 @@ DEFAULT_SETTINGS = {
         "dimanche": 0,
         "start_day": "lundi",
         "auto_next_week": 1,
+        "alternance": 1,
+        "alternance_libelles": LIBELLES_PAR_DEFAUT,
+        "alternance_reference": REFERENCE_PAR_DEFAUT,
     },
     "theme": {"theme": "standard"},
     "ddb": {"path": str(get_dir("cache") / DDB_FILENAME), "file_config_path": ""},
