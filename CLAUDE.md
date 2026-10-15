@@ -25,6 +25,7 @@ Application de prise de devoirs en Python 3.11 / Kivy, empaquetée avec Briefcas
 
 - **Réglages** : `mydevoirs/settings.py` (`AGENDA_PANEL`, `DEFAULT_SETTINGS`). Les types personnalisés sont enregistrés dans `MyDevoirsApp.build_settings`. `tests/test_settings.py` refuse tout type inconnu : ajouter une branche pour chaque nouveau type. Modifier un réglage de la section `agenda` appelle `go_agenda()`, qui reconstruit l'agenda.
 - **Semaines A/B** : `mydevoirs/alternance.py`. La lettre se calcule à partir d'un lundi de référence, jamais à partir de la parité du numéro ISO.
+- **Taille de la fenêtre** : `mydevoirs/fenetre.py`, appelé depuis `on_start` et `on_stop`, et non depuis `build`, que les tests appellent. Kivy ne donnant pas la taille de l'écran, on maximise la fenêtre pour mesurer la zone utile. Toujours utiliser `Window.system_size` : sous Windows, `Window.size` se lit en pixels physiques mais s'écrit en pixels logiques.
 - **`mydevoirs.dist-info/` à la racine** : vestige (version 0.6.4, Briefcase 0.3.2). Quand on lance depuis la racine du dépôt, `importlib.metadata` le lit en priorité, et `VERSION` vaut alors 0.6.4. Les livrables n'ont pas ce problème. On ne peut pas simplement le supprimer : `settings.py` y lit la `Home-page`, absente de `pyproject.toml`.
 
 ## Construire l'AppImage en local
