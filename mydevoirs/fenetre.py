@@ -66,14 +66,19 @@ class TailleFenetre:
     def appliquer(self):
         # C'est la taille que retrouvera l'utilisateur en quittant le mode maximisé
         self.window.system_size = self.taille_enregistree()
+        # Au tour suivant, une fois la taille ci-dessus appliquée par Kivy :
+        # sinon ce redimensionnement annulerait la maximisation.
+        Clock.schedule_once(self._maximiser, 0)
+
+    def _maximiser(self, dt):
         self._avant = tuple(self.window.system_size)
         self.window.bind(system_size=self._on_system_size)
+        # Programmé ici et non dans appliquer() : Kivy compte le délai depuis
+        # la dernière image, qui peut dater de plus d'une seconde au démarrage.
         self._secours = Clock.schedule_once(
             lambda dt: self._fin_mesure(None), DELAI_MESURE
         )
-        # Au tour suivant, une fois la taille ci-dessus appliquée par Kivy :
-        # sinon ce redimensionnement annulerait la maximisation.
-        Clock.schedule_once(lambda dt: self.window.maximize(), 0)
+        self.window.maximize()
 
     def _on_system_size(self, window, taille):
         if tuple(taille) != self._avant:
