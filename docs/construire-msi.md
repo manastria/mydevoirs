@@ -7,7 +7,11 @@ Briefcase ne construit pas de `.msi` depuis Linux ni WSL : il faut le faire sous
 ## Prérequis
 
 - **Git for Windows**.
-- **Python 3.11**, installé depuis python.org avec le lanceur `py`. L'application est construite avec la version de Python qui lance Briefcase.
+- **Python 3.11**, avec le lanceur `py`, installé de l'une de ces deux façons depuis python.org :
+  - le **Python Install Manager**, puis `py install 3.11` (étape 2) ;
+  - l'**installateur classique** de Python 3.11, qui installe aussi le lanceur `py`.
+
+  L'application est construite avec la version de Python qui lance Briefcase.
 - **Une connexion Internet** au premier passage : Briefcase télécharge son support Python et WiX.
 
 Inutile d'installer WiX. Quand la variable d'environnement `WIX` n'existe pas, Briefcase 0.3.18 télécharge lui-même WiX 3.14 dans son dossier de données. La CI, elle, l'installe avec `choco` et définit `WIX`.
@@ -40,7 +44,7 @@ Pour une mise à jour : `git pull` dans ce dossier.
 À faire une seule fois :
 
 ```powershell
-py install 3.11
+py install 3.11    # seulement avec le Python Install Manager
 py -3.11 -m pip install --user pipx
 py -3.11 -m pipx ensurepath
 py -3.11 -m pipx install poetry
