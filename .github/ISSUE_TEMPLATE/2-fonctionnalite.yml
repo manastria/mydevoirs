@@ -1,0 +1,82 @@
+name: ✨ Proposer une amélioration
+description: Suggérer une nouvelle fonctionnalité ou l'amélioration d'une fonctionnalité existante.
+title: "[Idée] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        MyDevoirs est pensé pour des enfants qui utilisent un ordinateur à l'école.
+        Les idées qui simplifient leur quotidien sont les bienvenues !
+
+  - type: checkboxes
+    id: verifications
+    attributes:
+      label: Avant de commencer
+      options:
+        - label: J'ai vérifié que cette idée n'a pas déjà été proposée dans les [issues](https://github.com/manastria/mydevoirs/issues?q=is%3Aissue).
+          required: true
+
+  - type: textarea
+    id: besoin
+    attributes:
+      label: Quel est le besoin ?
+      description: Décrivez la situation gênante ou ce qui manque aujourd'hui.
+      placeholder: "Mon enfant doit noter les mêmes devoirs chaque semaine et doit tout retaper."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposition
+    attributes:
+      label: Que proposez-vous ?
+      description: La solution telle que vous l'imaginez, même approximativement.
+      placeholder: "Pouvoir marquer un devoir comme « récurrent » pour qu'il réapparaisse chaque semaine."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: zone
+    attributes:
+      label: Quelle partie de MyDevoirs est concernée ?
+      multiple: true
+      options:
+        - Vue agenda
+        - Vue todo list
+        - Matières et couleurs
+        - Paramètres
+        - Raccourcis clavier
+        - Accessibilité / lisibilité (dys, OpenDyslexic, contraste)
+        - Base de données / synchronisation
+        - Installation et mise à jour
+        - Autre
+    validations:
+      required: false
+
+  - type: dropdown
+    id: public
+    attributes:
+      label: Qui en profiterait principalement ?
+      options:
+        - L'enfant qui note ses devoirs
+        - Le parent qui suit les devoirs
+        - L'enseignant / l'accompagnant
+        - Tout le monde
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Avez-vous déjà essayé un contournement ?
+      description: Ce que vous faites actuellement pour vous en sortir, ou une autre application qui le fait bien.
+    validations:
+      required: false
+
+  - type: textarea
+    id: maquette
+    attributes:
+      label: Croquis, capture, exemple
+      description: Glissez-déposez ici une image, un schéma, même fait à la main.
+    validations:
+      required: false

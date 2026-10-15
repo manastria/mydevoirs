@@ -1,0 +1,56 @@
+name: ❓ Poser une question / demander de l'aide
+description: Une difficulté d'installation ou d'utilisation, sans certitude qu'il s'agisse d'un bug.
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Le [mode d'emploi](https://manastria.github.io/mydevoirs/) couvre déjà
+        l'installation, les raccourcis clavier, les couleurs et la synchronisation.
+        Si vous n'y trouvez pas la réponse, posez votre question ici.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Votre question
+      placeholder: "Comment faire pour que les devoirs de mon fils apparaissent aussi sur mon ordinateur ?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sujet
+    attributes:
+      label: Sujet
+      options:
+        - Installation (Windows)
+        - Installation (Linux / AppImage)
+        - Utilisation au quotidien
+        - Synchronisation entre plusieurs ordinateurs
+        - Sauvegarde / récupération des devoirs
+        - Matières et couleurs personnalisées
+        - Accessibilité (police, contraste)
+        - Autre
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Système d'exploitation
+      options:
+        - Windows 11
+        - Windows 10
+        - Linux (AppImage)
+        - Linux (depuis les sources)
+        - Autre / je ne sais pas
+    validations:
+      required: false
+
+  - type: textarea
+    id: contexte
+    attributes:
+      label: Ce que vous avez déjà essayé
+      description: Facultatif, mais cela évite souvent un aller-retour.
+    validations:
+      required: false

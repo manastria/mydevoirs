@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Mode d'emploi
+    url: https://manastria.github.io/mydevoirs/
+    about: Avant d'ouvrir un ticket, le mode d'emploi répond peut-être déjà à votre question.
+  - name: ⬇️ Télécharger la dernière version
+    url: https://github.com/manastria/mydevoirs/releases/latest
+    about: Le problème est peut-être déjà corrigé dans la dernière version publiée.

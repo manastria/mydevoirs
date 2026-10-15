@@ -1,0 +1,115 @@
+name: 🐞 Signaler un bug
+description: Quelque chose ne fonctionne pas comme prévu dans MyDevoirs.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler ce problème !
+
+        Pas besoin d'être technicien : décrivez simplement ce que vous avez fait
+        et ce qui s'est passé. Les captures d'écran sont très utiles
+        (glissez-déposez l'image directement dans les zones de texte).
+
+  - type: checkboxes
+    id: verifications
+    attributes:
+      label: Avant de commencer
+      options:
+        - label: J'ai vérifié qu'un ticket similaire n'existe pas déjà dans les [issues ouvertes](https://github.com/manastria/mydevoirs/issues).
+          required: true
+        - label: J'utilise bien la [dernière version publiée](https://github.com/manastria/mydevoirs/releases/latest) de MyDevoirs (ou je précise ma version ci-dessous).
+          required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Que se passe-t-il ?
+      description: Décrivez le problème avec vos mots.
+      placeholder: "Quand je clique sur la corbeille pour supprimer un devoir, le logiciel se ferme d'un coup."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Comment reproduire le problème ?
+      description: Les étapes à suivre, une par ligne, pour que le problème réapparaisse.
+      placeholder: |
+        1. J'ouvre MyDevoirs en mode agenda
+        2. J'ajoute un devoir en « Mathématiques »
+        3. Je clique sur la corbeille
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Que devrait-il se passer à la place ?
+      placeholder: "Le devoir devrait être supprimé après confirmation, sans que le logiciel se ferme."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Système d'exploitation
+      options:
+        - Windows 11
+        - Windows 10
+        - Linux (AppImage)
+        - Linux (depuis les sources)
+        - Autre / je ne sais pas
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version de MyDevoirs
+      description: Visible dans les paramètres, ou nom du fichier téléchargé.
+      placeholder: "1.3.0"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: frequence
+    attributes:
+      label: À quelle fréquence le problème arrive-t-il ?
+      options:
+        - À chaque fois
+        - Souvent, mais pas systématiquement
+        - C'est arrivé une seule fois
+        - Je ne sais pas encore
+    validations:
+      required: false
+
+  - type: textarea
+    id: capture
+    attributes:
+      label: Captures d'écran
+      description: Glissez-déposez ici une ou plusieurs images si cela peut aider.
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Message d'erreur ou journal (log)
+      description: |
+        Si un message d'erreur s'est affiché, copiez-le ici.
+        Le fichier journal se trouve dans le dossier de configuration de MyDevoirs
+        (`%LOCALAPPDATA%\mydevoirs` sous Windows, `~/.config/mydevoirs` sous Linux).
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: complement
+    attributes:
+      label: Autre chose à ajouter ?
+      description: Base de données synchronisée (Dropbox, Seafile...), thème utilisé, couleurs personnalisées, etc.
+    validations:
+      required: false

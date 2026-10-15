@@ -10,8 +10,13 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 Ceci est la première version publiée après la reprise du projet par [manastria](https://github.com/manastria).
 
 ### Ajouté (Added)
-- Gestion des numéros de semaine dans la vue agenda.
-- Ajout d'une fonctionnalité pour naviguer rapidement vers une semaine ou un jour précis.
+- Gestion des numéros de semaine dans la vue agenda : « sem. N » à côté de chaque jour, et semaine affichée rappelée dans l'en-tête.
+- Repérage des semaines A et B (semaines impaires / paires), pour les emplois du temps qui alternent.
+- Badge « aujourd'hui » dans l'en-tête de l'agenda : date du jour et numéro de semaine.
+- Champ de saisie pour naviguer rapidement vers une semaine ou un jour précis (numéro de semaine, `JJ/MM/AAAA` ou `AAAA-MM-JJ`).
+
+### Corrigé (Fixed)
+- Défaut d'affichage sur le premier jour du mois dans l'agenda.
 
 ---
 

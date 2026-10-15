@@ -95,8 +95,8 @@ celerybeat-schedule
 .project
 .pydevproject
 
-# mkdocs documentation
-/site
+# mkdocs documentation (ce projet n'utilise pas mkdocs ; site/ contient le site
+# de présentation publié sur GitHub Pages, il doit donc être suivi par git)
 
 # mypy
 .mypy_cache/

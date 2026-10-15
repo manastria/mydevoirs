@@ -1,0 +1,51 @@
+# Publie le site de présentation (dossier site/) sur GitHub Pages.
+# Réglage à faire une fois : Settings → Pages → Build and deployment → Source : « GitHub Actions ».
+# Si la construction échoue, le site déjà en ligne reste inchangé.
+name: Publier le site
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'site/**'
+      - '.github/workflows/publier-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construire:
+    name: Vérifier et préparer le site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Active GitHub Pages sur le dépôt si ce n'est pas déjà fait.
+      - uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
+      - name: Vérifier que les fichiers liés existent
+        run: python3 site/verifier.py
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  publier:
+    name: Mettre en ligne
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

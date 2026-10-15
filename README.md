@@ -2,11 +2,11 @@
 >
 > Ce dépôt est un fork du projet original [mydevoirs par jgirardet](https://github.com/jgirardet/mydevoirs), qui est maintenant archivé et n'est plus maintenu.
 >
-> Cette version est activement développée pour corriger les bugs et ajouter de nouvelles fonctionnalités. Pour toute suggestion ou rapport de bug, merci d'ouvrir une "issue" sur ce dépôt.
+> Cette version est activement développée pour corriger les bugs et ajouter de nouvelles fonctionnalités. Pour toute suggestion ou rapport de bug, merci d'utiliser [les formulaires d'issue](#au-secours-jai-un-problème-il-manque-une-fonctionnalité) de ce dépôt.
 
 # MyDevoirs : La prise de devoirs sur ordinateur enfin simple !!!
 
-
+**[📖 Site de présentation](https://manastria.github.io/mydevoirs/)** · **[⬇️ Télécharger](https://github.com/manastria/mydevoirs/releases/latest)** · **[💬 Signaler un problème](https://github.com/manastria/mydevoirs/issues/new/choose)**
 
 ![agenda](docs/agenda800.png)
 
@@ -76,7 +76,17 @@ Les raccourcis claviers sont à utliser quand le curseur est dans une zone de te
 
 ## Au secours j'ai un problème/ il manque une fonctionnalité
 
-Il suffit de laisser un message/issue sur [Github issue](https://github.com/manastria/mydevoirs/issues). Il faut créer un compte github gratuit pour pouvoir laisser un message.
+Il suffit de laisser un message sur [Github issue](https://github.com/manastria/mydevoirs/issues/new/choose). Il faut créer un compte github gratuit pour pouvoir laisser un message.
+
+Trois formulaires guidés posent directement les bonnes questions, il n'y a rien de technique à savoir :
+
+| Formulaire | Quand l'utiliser |
+| --- | --- |
+| [🐞 Signaler un bug](https://github.com/manastria/mydevoirs/issues/new?template=1-bug.yml) | Quelque chose ne marche pas comme prévu, ou le logiciel se ferme tout seul. |
+| [✨ Proposer une amélioration](https://github.com/manastria/mydevoirs/issues/new?template=2-fonctionnalite.yml) | Il manque une fonctionnalité, ou un geste du quotidien pourrait être simplifié. |
+| [❓ Poser une question](https://github.com/manastria/mydevoirs/issues/new?template=3-question.yml) | Une difficulté d'installation ou d'utilisation, sans savoir si c'est un bug. |
+
+⚠️ La page des issues est publique : n'y mettez aucune information personnelle (nom, prénom, école, adresse électronique, ou tout ce qui permettrait d'identifier un enfant).
 
 ## Comment synchroniser MyDevoirs sur plusieurs ordinateurs ?
 

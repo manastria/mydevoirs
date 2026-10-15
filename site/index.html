@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MyDevoirs : noter ses devoirs sur l’ordinateur, simplement</title>
+<meta name="description" content="Logiciel gratuit et libre pour noter ses devoirs sur l’ordinateur, sans compte et sans Internet. Pensé pour les enfants qui travaillent sur ordinateur en classe, notamment les enfants dys. Windows et Linux.">
+<meta name="author" content="Manastria">
+<link rel="canonical" href="https://manastria.github.io/mydevoirs/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="MyDevoirs : noter ses devoirs sur l’ordinateur, simplement">
+<meta property="og:description" content="Logiciel gratuit et libre pour noter ses devoirs sur l’ordinateur, sans compte et sans Internet. Pensé pour les enfants qui travaillent sur ordinateur, notamment les enfants dys.">
+<meta property="og:url" content="https://manastria.github.io/mydevoirs/">
+<meta property="og:image" content="https://manastria.github.io/mydevoirs/icons/icon-512.png">
+<meta name="theme-color" content="#213a86">
+<link rel="icon" href="icons/logo.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#contenu">
+      <img src="icons/logo.png" alt="" width="40" height="40">
+      MyDevoirs
+    </a>
+    <nav aria-label="Sections de la page">
+      <a href="#vues">Les deux vues</a>
+      <a href="#raccourcis">Raccourcis</a>
+      <a href="#installer">Installer</a>
+      <a href="#aide">Aide</a>
+      <a href="https://github.com/manastria/mydevoirs">Code source</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ruled" aria-hidden="true"></div>
+
+<main id="contenu">
+
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="kicker">Gratuit · sans compte · sans Internet</p>
+        <h1>Noter ses devoirs sur l’ordinateur, enfin simple</h1>
+        <p class="lead">MyDevoirs est un agenda de devoirs pour les enfants qui travaillent sur ordinateur en classe. On ouvre le logiciel, on choisit une matière, on écrit : rien d’autre à remplir.</p>
+        <p class="notice"><span class="badge">Repris et maintenu</span><span>Le projet d’origine n’est plus maintenu. Cette version continue d’être corrigée et développée. <a href="#questions">En savoir plus.</a></span></p>
+        <p class="actions">
+          <a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest">Télécharger MyDevoirs</a>
+          <a class="btn alt" href="#vues">Voir à quoi ça ressemble</a>
+        </p>
+      </div>
+      <figure class="shot">
+        <img src="img/agenda.webp" alt="La vue agenda de MyDevoirs : les jours de la semaine côte à côte, chaque devoir écrit dans la couleur de sa matière." width="790" height="421">
+        <figcaption>La vue agenda : un jour par colonne, une couleur par matière.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="pourquoi" aria-labelledby="h-pourquoi">
+    <div class="wrap">
+      <h2 id="h-pourquoi">Pourquoi ce logiciel</h2>
+      <p class="prose">MyDevoirs est né d’un besoin concret : un enfant équipé d’un ordinateur en classe depuis le CM1, et aucun outil vraiment adapté. Rainlendar, OneNote, l’agenda de Windows… tous pensés pour des adultes. Celui-ci a été développé avec lui, selon ses besoins et ses exigences.</p>
+      <div class="box prose">
+        <ul>
+          <li><strong>Deux clics pour un devoir</strong> : on clique sur <img class="ico" src="icons/012-add.png" alt="le bouton d’ajout" width="24" height="24">, on choisit la matière, et le curseur est déjà dans la zone de texte.</li>
+          <li><strong>Une couleur par matière</strong>, modifiable, pour repérer sa leçon de maths d’un coup d’œil.</li>
+          <li><strong>Tout au clavier</strong> : quatre raccourcis suffisent pour ajouter, dupliquer, changer de matière ou effacer.</li>
+          <li><strong>Rien en ligne</strong> : les devoirs sont enregistrés dans un simple fichier, sur l’ordinateur de l’enfant.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="vues" aria-labelledby="h-vues">
+    <div class="wrap">
+      <h2 id="h-vues">Les deux vues</h2>
+      <p class="prose">MyDevoirs propose deux affichages complémentaires, et un bouton pour passer de l’un à l’autre. En pratique, l’agenda sert à recopier ce qui est écrit au tableau ; la liste des tâches sert le soir, à la maison.</p>
+      <div class="two">
+        <div class="box">
+          <h3><img src="icons/014-calendar.png" alt="" width="28" height="28">La vue agenda</h3>
+          <p>Chaque jour de la semaine avec tous ses devoirs, faits ou non. Les flèches changent de semaine, et le numéro de semaine est affiché. Les jours visibles et le premier jour de la semaine se règlent dans les paramètres.</p>
+          <figure class="shot">
+            <img src="img/agenda.webp" alt="Vue agenda : les devoirs répartis jour par jour sur la semaine." width="790" height="421" loading="lazy">
+          </figure>
+        </div>
+        <div class="box">
+          <h3><img src="icons/010-test.png" alt="" width="28" height="28">La liste des tâches</h3>
+          <p>Uniquement ce qui reste à faire. Quand un devoir est coché, la ligne disparaît : il ne reste que le travail en attente, et l’écran se vide à mesure que l’enfant avance.</p>
+          <figure class="shot">
+            <img src="img/todo.webp" alt="Vue liste des tâches : seuls les devoirs restant à faire sont affichés." width="792" height="353" loading="lazy">
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="raccourcis" aria-labelledby="h-raccourcis">
+    <div class="wrap">
+      <h2 id="h-raccourcis">Quatre raccourcis à retenir</h2>
+      <p class="prose">Ils s’utilisent quand le curseur se trouve dans une zone de texte.</p>
+      <ul class="keys">
+        <li><kbd>Ctrl</kbd> <kbd>N</kbd> <div><b>Nouveau devoir</b><span>La liste des matières s’affiche : on choisit avec les flèches, on valide avec Entrée.</span></div></li>
+        <li><kbd>Ctrl</kbd> <kbd>D</kbd> <div><b>Dupliquer la matière</b><span>Une nouvelle ligne dans la même matière, pour enchaîner « leçon » puis « exercices ».</span></div></li>
+        <li><kbd>Ctrl</kbd> <kbd>M</kbd> <div><b>Changer de matière</b><span>On se déplace avec les flèches, on valide avec Entrée ou la flèche droite.</span></div></li>
+        <li><kbd>Ctrl</kbd> <kbd>E</kbd> <div><b>Effacer la ligne</b><span>Supprime le devoir en cours d’édition.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="dys" aria-labelledby="h-dys">
+    <div class="wrap">
+      <h2 id="h-dys">Pour les enfants dys</h2>
+      <p class="prose">Les enfants qui ont besoin d’un ordinateur en classe sont souvent des enfants dys. L’affichage est donc réglable, pour s’approcher de ce qui se lit le mieux, enfant par enfant.</p>
+      <div class="two">
+        <div class="box">
+          <ul>
+            <li><strong>La police OpenDyslexic</strong>, dessinée pour limiter les confusions entre les lettres.</li>
+            <li><strong>Un thème contrasté</strong>, pour renforcer la lisibilité à l’écran.</li>
+            <li><strong>Des matières sur mesure</strong> : en ajouter, les réordonner par glisser-déposer, en supprimer, et choisir la couleur de chacune par un clic droit.</li>
+            <li><strong>Des jours choisis</strong> : on n’affiche que les jours utiles, pour alléger l’écran.</li>
+          </ul>
+        </div>
+        <figure class="shot">
+          <img src="img/palette.webp" alt="L’écran des couleurs : la liste des matières, chacune dans sa teinte, avec les boutons pour les ajouter, les déplacer ou les supprimer." width="798" height="633" loading="lazy">
+          <figcaption>L’écran des couleurs : chaque matière, son ordre et sa teinte.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="installer" aria-labelledby="h-installer">
+    <div class="wrap">
+      <h2 id="h-installer">Installer MyDevoirs</h2>
+      <p class="prose">Les fichiers d’installation sont publiés sur la page des versions du projet. Choisissez celui qui correspond à votre système.</p>
+      <div class="two">
+        <div class="box">
+          <h3>Windows</h3>
+          <p class="file">Un fichier <code>.msi</code>, l’installateur habituel de Windows.</p>
+          <ol>
+            <li>Téléchargez le fichier <code>.msi</code> de la dernière version.</li>
+            <li>Double-cliquez dessus et laissez l’installation se faire.</li>
+            <li>Un raccourci MyDevoirs apparaît dans le menu Démarrer.</li>
+          </ol>
+          <p class="actions"><a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest">Dernière version</a></p>
+        </div>
+        <div class="box">
+          <h3>Linux</h3>
+          <p class="file">Un fichier <code>.AppImage</code>, qui fonctionne sur toutes les distributions.</p>
+          <ol>
+            <li>Téléchargez le fichier <code>.AppImage</code>.</li>
+            <li>Rendez-le exécutable : <code>chmod +x MyDevoirs.AppImage</code>, ou par clic droit, Propriétés, Permissions, « Autoriser l’exécution du fichier comme un programme ».</li>
+            <li>Double-cliquez : il n’y a rien à installer.</li>
+          </ol>
+          <p class="actions"><a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest">Dernière version</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="donnees" aria-labelledby="h-donnees">
+    <div class="wrap">
+      <h2 id="h-donnees">Vos données</h2>
+      <p class="prose">Aucun compte, aucune publicité, aucun suivi, et aucun besoin d’Internet pour s’en servir. Les devoirs sont enregistrés dans un seul fichier de base de données, sur l’ordinateur : rien n’est envoyé vers un serveur. L’emplacement de ce fichier est affiché dans les paramètres, et il suffit de le copier pour sauvegarder les devoirs.</p>
+      <p class="note">Il est possible de placer ce fichier dans un dossier synchronisé (Dropbox, Seafile, Box, SugarSync…) pour retrouver les devoirs sur un second ordinateur. <a href="#questions">Les précautions à prendre</a> sont décrites plus bas.</p>
+    </div>
+  </section>
+
+  <section id="aide" aria-labelledby="h-aide">
+    <div class="wrap">
+      <h2 id="h-aide">Un problème, une idée, une question</h2>
+      <p class="prose">Les retours passent par les « issues » du dépôt GitHub. Trois formulaires posent les bonnes questions à votre place : il n’y a rien de technique à savoir, seulement un compte GitHub gratuit à créer.</p>
+      <div class="help">
+        <a href="https://github.com/manastria/mydevoirs/issues/new?template=1-bug.yml">
+          <strong>Signaler un bug</strong>
+          <span>Quelque chose ne marche pas comme prévu, ou le logiciel se ferme tout seul.</span>
+        </a>
+        <a href="https://github.com/manastria/mydevoirs/issues/new?template=2-fonctionnalite.yml">
+          <strong>Proposer une amélioration</strong>
+          <span>Il manque une fonctionnalité, ou un geste du quotidien pourrait être simplifié.</span>
+        </a>
+        <a href="https://github.com/manastria/mydevoirs/issues/new?template=3-question.yml">
+          <strong>Poser une question</strong>
+          <span>Une difficulté d’installation ou d’utilisation, sans savoir si c’est un bug.</span>
+        </a>
+      </div>
+      <p class="note">La page des issues est publique. N’y mettez aucune information personnelle : ni nom, ni prénom, ni école, ni adresse électronique, et rien qui permette d’identifier un enfant.</p>
+    </div>
+  </section>
+
+  <section id="questions" aria-labelledby="h-questions">
+    <div class="wrap">
+      <h2 id="h-questions">Questions fréquentes</h2>
+
+      <details>
+        <summary>MyDevoirs est-il vraiment gratuit ?</summary>
+        <div class="answer prose">
+          <p>Oui. MyDevoirs est un logiciel libre sous licence LGPLv3 : il est gratuit, son code source est public, et personne ne revend vos données, puisqu’il n’en collecte aucune.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Peut-on synchroniser plusieurs ordinateurs ?</summary>
+        <div class="answer prose">
+          <p>Oui, en plaçant le fichier de base de données dans un dossier synchronisé par un service tiers (Dropbox, Seafile, Box, SugarSync…). Dans les paramètres, on clique sur le chemin actuel, puis on choisit le dossier synchronisé et un nom de fichier. MyDevoirs propose alors de recopier la base existante dans ce nouveau fichier, puis redémarre.</p>
+          <p class="note attention"><strong>Important :</strong> cette méthode synchronise et sauvegarde la base de données, mais ne permet pas de travailler à deux en même temps. Pour un même fichier synchronisé, n’ouvrez MyDevoirs que sur une seule machine à la fois, sous peine de perdre des données.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Comment sauvegarder les devoirs ?</summary>
+        <div class="answer prose">
+          <p>En copiant le fichier de base de données, dont le chemin est affiché dans les paramètres. Ce seul fichier contient tous les devoirs, les matières et les couleurs.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Mon enfant n’est pas dys, est-ce quand même utile ?</summary>
+        <div class="answer prose">
+          <p>Bien sûr. MyDevoirs a été pensé pour des enfants dys parce que ce sont eux qui, le plus souvent, écrivent sur ordinateur en classe. Mais rien n’y est réservé : tout enfant qui doit noter ses devoirs sur un ordinateur peut s’en servir tel quel.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Quelle est l’histoire de ce projet ?</summary>
+        <div class="answer prose">
+          <p>MyDevoirs a été créé par <a href="https://github.com/jgirardet/mydevoirs">jgirardet</a> pour son fils. Ce dépôt d’origine est aujourd’hui archivé et n’est plus maintenu. Le projet est repris et développé ici par <a href="https://github.com/manastria">manastria</a>, pour corriger les bugs et ajouter de nouvelles fonctionnalités.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Et une version Mac, Android ou iPhone ?</summary>
+        <div class="answer prose">
+          <p>Pour l’instant, seules les versions Windows et Linux sont publiées. Le code repose sur <a href="https://www.kivy.org">Kivy</a>, qui ouvre la voie à d’autres systèmes, mais aucune autre version n’est distribuée à ce jour.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>MyDevoirs, logiciel libre sous <a href="https://github.com/manastria/mydevoirs/blob/master/LICENSE">licence LGPLv3</a>. Créé par <a href="https://github.com/jgirardet">jgirardet</a>, repris par <a href="https://github.com/manastria">manastria</a>.</p>
+    <p><a href="https://github.com/manastria/mydevoirs">Code source</a> · <a href="https://github.com/manastria/mydevoirs/blob/master/CHANGELOG.md">Journal des modifications</a> · <a href="https://github.com/manastria/mydevoirs/issues">Issues</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
