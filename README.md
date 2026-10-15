@@ -8,9 +8,9 @@
 
 **[📖 Site de présentation](https://manastria.github.io/mydevoirs/)** · **[⬇️ Télécharger](https://github.com/manastria/mydevoirs/releases/latest)** · **[💬 Signaler un problème](https://github.com/manastria/mydevoirs/issues/new/choose)**
 
-![agenda](docs/agenda800.png)
+![agenda](docs/images/agenda800.png)
 
-![todo](docs/todo800.png)
+![todo](docs/images/todo800.png)
 
 ## Pourquoi MyDevoirs ?
 
@@ -44,7 +44,7 @@ Pour l'instant disponible sous Windows et Linux.
 
 Il y a 2 interfaces possibles : Une interface type `agenda` ![agenda](mydevoirs/data/icons/014-calendar.png) qui affiche chaque jour de la semaine avec les devoirs de chaque jour, une autre type `todo list` (liste des tâches) ![todo list](mydevoirs/data/icons/010-test.png). Il semble plus facile de noter ses devoirs dans le mode `agenda`, mais plus simple de faire ses devoirs en mode `todo list`. La `todolist` n'affiche que les devoirs non encore effectués alors que l'`agenda` affiche l'intégralité des devoirs.
 
-Il est possible de modifier les jours affichés et le premier jour de la semaine dans `Paramètres` ![parametres](docs/params.png).
+Il est possible de modifier les jours affichés et le premier jour de la semaine dans `Paramètres` ![parametres](docs/images/params.png).
 
 En mode `agenda`, on change de semaine en cliquant sur ![suivant](mydevoirs/data/icons/chevron-right.png) pour semaine suivante ou pour semaine précédente. ![precedant](mydevoirs/data/icons/chevron-left.png)
 
@@ -60,7 +60,7 @@ On clique sur ![non fait](mydevoirs/data/icons/017-cancel.png) qui devient ![fai
 
 ### Pour supprimer un devoir:
 
-On clique sur ![non fait](docs/garbage.png), il faut ensuite confirmer.
+On clique sur ![non fait](docs/images/garbage.png), il faut ensuite confirmer.
 
 ## C'est un peu long de reprendre la souris à chaque fois, des raccourcis claviers ce serait bien...
 
@@ -100,19 +100,19 @@ IL EST DONC IMPORTANT, POUR UN MÊME FICHIER SYNCHRONISÉ, DE N'OUVRIR MYDEVOIRS
 
 - tout d'abord cliquer sur le chemin actuel dans les paramêtres :
 
-![clickmenu](docs/ddb/clickmenu.png)
+![clickmenu](docs/images/ddb/clickmenu.png)
 
 - ensuite sélectionner le répertoire voulu et entrer un nouveau nom de fichier ou en selectionner un. Il est important que le chemin complet du fichier voulu apparaissent dans le zone de nom :
 
-![browser](docs/ddb/browser.png)
+![browser](docs/images/ddb/browser.png)
 
 - On vous demande ensuite si vous souhaitez ou non recopier le contenu de la base actuelle dans le nouveau fichier :
 
-![copier](docs/ddb/copier.png)
+![copier](docs/images/ddb/copier.png)
 
 - Enfin une ultime confirmation si le fichier selectionné existait déjà :
 
-![copier](docs/ddb/ecraser.png)
+![copier](docs/images/ddb/ecraser.png)
 
 - et voilà MyDevoirs va redémarrer depuis nouvelle base de données.
 
@@ -121,14 +121,14 @@ IL EST DONC IMPORTANT, POUR UN MÊME FICHIER SYNCHRONISÉ, DE N'OUVRIR MYDEVOIRS
 - Cliquer sur la palette ![palette](mydevoirs/data/icons/colorchooser.png).
 - l'écran du choix des couleurs s'affiche :
 
-![color-choix](docs/palette/basepalette.png)
+![color-choix](docs/images/palette/basepalette.png)
 
 - L'édition se fait de la manière suivante:
   - ![add](mydevoirs/data/icons/012-add.png) permet d'ajouter une matière juste au dessus.
   - ![move](mydevoirs/data/icons/arrowmove.png) permet de changer l'ordre des matière. Cliquer, maintenir, déplacer la souris, relacher.
   - ![del](mydevoirs/data/icons/017-cancel.png) pour effacer une matière. ATTENTION la supression d'une matière entraine la supression de tous les devoirs correspondants.
   - Cliquer avec le bouton DROIT sur le texte pour changer de couleur:  
-    ![color-choix](docs/palette/colorchooser.png)
+    ![color-choix](docs/images/palette/colorchooser.png)
 
 ## MyDevoirs c'est gratuit ?
 

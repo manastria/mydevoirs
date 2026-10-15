@@ -34,6 +34,11 @@ Application de prise de devoirs en Python 3.11 / Kivy, empaquetée avec Briefcas
 - Garder `ca-certificates` dans `system_requires` (`[tool.briefcase.app.mydevoirs.linux]`) : sans lui, `appimagetool` ne peut pas télécharger son runtime dans l'image Docker.
 - Pour tester l'AppImage : `APPIMAGE_EXTRACT_AND_RUN=1 ./dist/mydevoirs-X.Y.Z-x86_64.AppImage` (évite d'avoir besoin de FUSE).
 
+## Documentation
+
+- La documentation est dans `docs/`, en Markdown. Les images du README sont dans `docs/images/`.
+- `docs/construire-msi.md` : construire et tester l'installateur Windows sur un PC.
+
 ## Publier une version
 
 1. Sur `dev` :
