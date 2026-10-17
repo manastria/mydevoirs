@@ -12,7 +12,11 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 - L'en-tête de l'agenda n'affiche plus qu'une semaine, celle qu'on regarde : son numéro, sa lettre, ses dates et sa position par rapport à aujourd'hui (« cette semaine », « dans 2 semaines »...). Un bouton « Aujourd'hui » y ramène quand on consulte une autre semaine.
 - Le jour d'aujourd'hui est mis en couleur dans l'agenda. Les titres des jours n'indiquent plus la semaine ni l'année, déjà présentes dans l'en-tête.
 
+- Les fichiers d'installation sont publiés sous des noms fixes (`MyDevoirs-Windows.msi`, `MyDevoirs-Linux.AppImage`), sans numéro de version. Le site propose ainsi un téléchargement direct de la dernière version, adapté à votre système.
+- Le champ de saut de l'agenda accepte un numéro de semaine (`12`), une semaine d'une autre année (`3/2027`) ou une date (`JJ/MM/AAAA`, `AAAA-MM-JJ`).
+
 ### Corrigé (Fixed)
+- Champ de saut de l'agenda : un numéro de semaine est cherché dans l'année de la semaine affichée, et non plus toujours dans l'année en cours. Une saisie incorrecte (semaine 53 inexistante, date impossible ou hors de 1900–2100) affiche un message en rouge et reste à l'écran pour être corrigée, au lieu d'être effacée. Les dates extrêmes (`01/01/0001`) ne risquent plus de faire planter le logiciel.
 - Si MyDevoirs reste ouvert après minuit, le jour mis en couleur suit le changement de date.
 - Quand la semaine commence un autre jour que le lundi, le numéro et la lettre de la semaine correspondent bien aux jours affichés.
 

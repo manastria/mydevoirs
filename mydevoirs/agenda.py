@@ -1,5 +1,6 @@
 import datetime
 import itertools
+import re
 from typing import List
 
 from kivy.app import App
@@ -96,6 +97,39 @@ def date_accueil(aujourdhui: datetime.date = None) -> datetime.date:
     if jour.weekday() in (5, 6) and get_config("agenda", "auto_next_week", bool, False):
         return jour + datetime.timedelta(days=3)
     return jour
+
+
+ANNEE_MIN, ANNEE_MAX = 1900, 2100
+
+
+def interpreter_saisie(texte: str, annee: int) -> datetime.date:
+    """Date visée par le champ de saut ; ValueError avec un message lisible sinon.
+
+    Formats : `N` (semaine de l'année `annee`), `N/AAAA`, `JJ/MM/AAAA`, `AAAA-MM-JJ`.
+    Une semaine donne son lundi.
+    """
+    texte = texte.strip()
+    semaine = re.fullmatch(r"(\d{1,2})(?:/(\d{4}))?", texte)
+    if semaine:
+        numero = int(semaine[1])
+        if semaine[2]:
+            annee = int(semaine[2])
+        if not ANNEE_MIN <= annee <= ANNEE_MAX:
+            raise ValueError(f"Année entre {ANNEE_MIN} et {ANNEE_MAX}")
+        try:
+            return datetime.date.fromisocalendar(annee, numero, 1)
+        except ValueError:
+            raise ValueError(f"{annee} n'a pas de semaine {numero}") from None
+
+    for format_date in ("%d/%m/%Y", "%Y-%m-%d"):
+        try:
+            jour = datetime.datetime.strptime(texte, format_date).date()
+        except ValueError:
+            continue
+        if not ANNEE_MIN <= jour.year <= ANNEE_MAX:
+            raise ValueError(f"Année entre {ANNEE_MIN} et {ANNEE_MAX}")
+        return jour
+    raise ValueError("Saisie non reconnue : semaine ou date JJ/MM/AAAA")
 
 
 class AgendaItemWidget(ItemWidget):
@@ -301,13 +335,17 @@ class Agenda(Screen):
         self.bouton_aujourdhui.bind(on_release=lambda *args: self.go_date())
 
         self.goto_input = TextInput(
-            hint_text="Semaine ou date DD/MM/YYYY",
+            hint_text="Semaine ou date JJ/MM/AAAA",
             multiline=False,
             size_hint=(None, None),
             width=260,
             height=30,
         )
-        self.goto_input.bind(on_text_validate=self._on_goto_input)
+        self._couleur_saisie = list(self.goto_input.foreground_color)
+        self._erreur_affichee = False
+        self.goto_input.bind(
+            on_text_validate=self._on_goto_input, text=self._effacer_erreur
+        )
 
         self.header.add_widget(self.titre_semaine)
         self.header.add_widget(self.bouton_aujourdhui)
@@ -332,23 +370,30 @@ class Agenda(Screen):
         self._refresh_entete()
 
     def _on_goto_input(self, instance):
-        text = instance.text.strip()
-        if not text:
+        if not instance.text.strip():
             return
+        # Un numéro de semaine se lit dans l'année de la semaine affichée.
+        annee = self.carousel.date.isocalendar()[0]
         try:
-            if text.isdigit():
-                year = datetime.date.today().year
-                date = datetime.date.fromisocalendar(year, int(text), 1)
-            else:
-                # Try new format DD/MM/YYYY first, then legacy YYYY-MM-DD
-                try:
-                    date = datetime.datetime.strptime(text, "%d/%m/%Y").date()
-                except ValueError:
-                    date = datetime.datetime.strptime(text, "%Y-%m-%d").date()
-            self.go_date(date)
-        except ValueError:
-            pass
+            date = interpreter_saisie(instance.text, annee)
+        except ValueError as erreur:
+            # La saisie reste en place pour être corrigée.
+            self._signaler_erreur(str(erreur))
+            return
+        self.go_date(date)
         instance.text = ""
+
+    def _signaler_erreur(self, message):
+        self.titre_semaine.text = f"[color=cc0000]{escape_markup(message)}[/color]"
+        self.goto_input.foreground_color = (0.8, 0, 0, 1)
+        self._erreur_affichee = True
+
+    def _effacer_erreur(self, *args):
+        if not self._erreur_affichee:
+            return
+        self._erreur_affichee = False
+        self.goto_input.foreground_color = self._couleur_saisie
+        self._refresh_entete()
 
     def _refresh_entete(self, *args):
         jour = self.carousel.date
