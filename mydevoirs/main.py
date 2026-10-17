@@ -6,6 +6,15 @@ from configparser import MissingSectionHeaderError, NoOptionError, NoSectionErro
 from pathlib import Path
 from typing import Optional, Tuple
 
+# Erreurs rencontrées avant l'import de Kivy : son journal n'existe pas encore,
+# elles sont écrites plus bas, juste après l'import.
+_erreurs_demarrage = []
+
+
+def _noter_erreur(contexte, erreur):
+    _erreurs_demarrage.append(f"{contexte} : {erreur!r}")
+
+
 # Ensure Kivy Windows runtime dependencies are available before importing Kivy
 if platform.system() == "Windows":  # pragma: no cover_linux
     try:
@@ -30,7 +39,8 @@ if platform.system() == "Windows":  # pragma: no cover_linux
         # when dep_bins are empty or missing expected DLLs.
         try:
             base_dir = os.path.abspath(os.path.dirname(sys.executable))
-        except Exception:
+        except Exception as e:
+            _noter_erreur("dossier de l'exécutable introuvable", e)
             base_dir = None
         dll_names = {"SDL2.dll", "libEGL.dll", "libGLESv2.dll", "glew32.dll", "glew32s.dll"}
         if base_dir and (not dep_paths or os.environ.get("MYDEVOIRS_FORCE_DLL_SCAN")):
@@ -50,8 +60,8 @@ if platform.system() == "Windows":  # pragma: no cover_linux
                     add_dll_dir(p)
                 else:
                     os.environ["PATH"] = p + os.pathsep + os.environ.get("PATH", "")
-            except Exception:
-                pass
+            except Exception as e:
+                _noter_erreur(f"ajout du dossier DLL {p}", e)
 
         # Optional debug: verify presence of DLL folders
         if os.environ.get("MYDEVOIRS_DEBUG_WINDOWS_DEPS"):
@@ -94,14 +104,14 @@ if platform.system() == "Windows":  # pragma: no cover_linux
                             add_dll_dir(ap)
                         else:
                             os.environ["PATH"] = ap + os.pathsep + os.environ.get("PATH", "")
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        _noter_erreur(f"ajout du dossier DLL pywin32 {ap}", e)
 
             # Try importing win32file now so Kivy's filechooser check succeeds
             try:  # type: ignore
                 import win32file  # noqa: F401
-            except Exception:
-                pass
+            except Exception as e:
+                _noter_erreur("import de win32file", e)
 
             if os.environ.get("MYDEVOIRS_DEBUG_WINDOWS_DEPS"):
                 try:
@@ -111,13 +121,17 @@ if platform.system() == "Windows":  # pragma: no cover_linux
                     sys.stdout.flush()
                 except Exception:
                     pass
-        except Exception:
-            pass
-    except Exception:
+        except Exception as e:
+            _noter_erreur("préparation de pywin32", e)
+    except Exception as e:
         # If deps are missing, Kivy may still run in dev env; packaged app will fail early otherwise
-        pass
+        _noter_erreur("préparation des dépendances Kivy", e)
 
 from kivy.config import ConfigParser
+from kivy.logger import Logger
+
+for _erreur in _erreurs_demarrage:
+    Logger.warning(f"MyDevoirs: {_erreur}")
 from mydevoirs.app import MyDevoirsApp
 from mydevoirs.avertissement import BackupAncienneDB
 
