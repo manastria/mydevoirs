@@ -29,6 +29,7 @@
       MyDevoirs
     </a>
     <nav aria-label="Sections de la page">
+      <a href="#utiliser">Prendre en main</a>
       <a href="#vues">Les deux vues</a>
       <a href="#raccourcis">Raccourcis</a>
       <a href="#installer">Installer</a>
@@ -83,7 +84,7 @@
       <div class="two">
         <div class="box">
           <h3><img src="icons/014-calendar.png" alt="" width="28" height="28">La vue agenda</h3>
-          <p>Chaque jour de la semaine avec tous ses devoirs, faits ou non. Les flèches changent de semaine, et le numéro de semaine est affiché. Les jours visibles et le premier jour de la semaine se règlent dans les paramètres.</p>
+          <p>Chaque jour de la semaine avec tous ses devoirs, faits ou non. On change de semaine avec les flèches de la barre du haut (<a href="#changer-de-semaine">comment faire</a>), et le numéro de semaine est affiché. Les jours visibles et le premier jour de la semaine se règlent dans les paramètres.</p>
           <figure class="shot">
             <img src="img/agenda.webp" alt="Vue agenda : les devoirs répartis jour par jour sur la semaine." width="790" height="421" loading="lazy">
           </figure>
@@ -94,6 +95,48 @@
           <figure class="shot">
             <img src="img/todo.webp" alt="Vue liste des tâches : seuls les devoirs restant à faire sont affichés." width="792" height="353" loading="lazy">
           </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="utiliser" aria-labelledby="h-utiliser">
+    <div class="wrap">
+      <h2 id="h-utiliser">Prendre en main</h2>
+      <p class="prose">Rien à régler pour commencer : on ouvre MyDevoirs et la semaine en cours est affichée. Voici les gestes de tous les jours, dans l’ordre où on les rencontre.</p>
+      <div class="two">
+        <div class="box">
+          <h3><img src="icons/012-add.png" alt="" width="28" height="28">Noter un devoir</h3>
+          <ol>
+            <li>Cliquez sur <img class="ico" src="icons/012-add.png" alt="le bouton d’ajout" width="24" height="24"> dans l’en-tête du jour concerné.</li>
+            <li>Choisissez la matière dans la liste.</li>
+            <li>Écrivez le devoir. Il est enregistré au fur et à mesure : il n’y a pas de bouton « Enregistrer ».</li>
+          </ol>
+        </div>
+        <div class="box">
+          <h3><img src="icons/coche.png" alt="" width="28" height="28">Cocher quand c’est fait</h3>
+          <ul>
+            <li>À droite de chaque devoir, la croix rouge <img class="ico" src="icons/croix.png" alt="croix rouge" width="24" height="24"> devient une coche verte <img class="ico" src="icons/coche.png" alt="coche verte" width="24" height="24"> d’un clic : le devoir est fait.</li>
+            <li>Le compteur de l’en-tête du jour (« 1/3 ») montre ce qui est déjà fait.</li>
+            <li>La poubelle <img class="ico" src="icons/garbage.png" alt="la poubelle" width="24" height="24"> supprime le devoir.</li>
+          </ul>
+        </div>
+        <div class="box" id="changer-de-semaine">
+          <h3><img src="icons/014-calendar.png" alt="" width="28" height="28">Changer de semaine</h3>
+          <ul>
+            <li>Dans la barre du haut, les flèches <img class="ico" src="icons/precedent.png" alt="flèche gauche" width="24" height="24"> et <img class="ico" src="icons/suivant.png" alt="flèche droite" width="24" height="24"> affichent la semaine précédente et la suivante.</li>
+            <li>L’en-tête de l’agenda rappelle le numéro de la semaine, ses dates, et sa place par rapport à aujourd’hui (« cette semaine », « dans 2 semaines »).</li>
+            <li>Dès qu’on s’éloigne de la semaine en cours, un bouton <strong>Aujourd’hui</strong> apparaît pour y revenir d’un clic.</li>
+            <li>Pour aller plus loin d’un coup, tapez dans le champ de l’en-tête puis appuyez sur Entrée : un numéro de semaine (<code>12</code>), une semaine d’une autre année (<code>3/2027</code>) ou une date (<code>25/12/2026</code>).</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3><img src="icons/010-test.png" alt="" width="28" height="28">Le reste de la barre du haut</h3>
+          <ul>
+            <li><img class="ico" src="icons/014-calendar.png" alt="l’agenda" width="24" height="24"> et <img class="ico" src="icons/010-test.png" alt="la liste des tâches" width="24" height="24"> passent de l’agenda à la liste des tâches, et inversement.</li>
+            <li>Un autre bouton ouvre l’écran des couleurs, pour ajouter des matières, les réordonner et choisir leur teinte.</li>
+            <li><img class="ico" src="icons/params.png" alt="l’engrenage" width="24" height="24"> ouvre les paramètres : jours affichés, premier jour de la semaine, semaines A/B, police et thème.</li>
+          </ul>
         </div>
       </div>
     </div>

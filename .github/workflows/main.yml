@@ -158,12 +158,16 @@ jobs:
 
       # Noms sans numéro de version : le site de présentation pointe vers
       # .../releases/latest/download/MyDevoirs-Windows.msi (et -Linux.AppImage).
-      # Chaque fichier est facultatif : la release est créée même sans AppImage.
+      # Les fichiers peuvent être dans un sous-dossier (le .msi est dans installers/dist/) :
+      # on les cherche à toute profondeur. L'AppImage est facultatif (la release est créée
+      # même sans lui), pas le .msi.
       - name: Rename installers to stable names
         run: |
-          for f in installers/*.msi; do [ -e "$f" ] && mv "$f" installers/MyDevoirs-Windows.msi; done
-          for f in installers/*.AppImage; do [ -e "$f" ] && mv "$f" installers/MyDevoirs-Linux.AppImage; done
-          ls -l installers
+          find installers -type f -name '*.msi' -exec mv {} installers/MyDevoirs-Windows.msi \;
+          find installers -type f -name '*.AppImage' -exec mv {} installers/MyDevoirs-Linux.AppImage \;
+          find installers -mindepth 1 -type d -empty -delete
+          ls -lR installers
+          test -f installers/MyDevoirs-Windows.msi || { echo "::error::MyDevoirs-Windows.msi introuvable"; exit 1; }
 
       - name: Create Release and upload files
         uses: softprops/action-gh-release@v1
