@@ -23,6 +23,7 @@ from mydevoirs.custom_setting import (
     SettingSemaineCourante,
 )
 from mydevoirs.database import init_database
+from mydevoirs.fenetre import TailleFenetre
 from mydevoirs.settings import DEFAULT_SETTINGS, SETTING_PANELS
 from mydevoirs.utils import get_config, get_dir
 import logging
@@ -43,6 +44,7 @@ class MyDevoirsApp(App):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.avertissement = None
+        self.taille_fenetre = None
 
     def init_database(self):
         path = self.load_config()["ddb"]["path"]
@@ -62,15 +64,6 @@ class MyDevoirsApp(App):
         from mydevoirs.agenda import Agenda
         from mydevoirs.colorchooser import ColorChooser
         from mydevoirs.todo import Todo
-        from kivy.core.window import Window
-        # In packaged environments, a missing window provider can yield None.
-        # Fallback to graphics config to avoid crash and let Kivy create window later.
-        if Window is not None:
-            Window.size = (1200, 800)  # Largeur, hauteur
-        else:  # pragma: no cover_all
-            from kivy.config import Config
-            Config.set("graphics", "width", 1200)
-            Config.set("graphics", "height", 800)
 
         self.load_theme()
         self.sm = ScreenManager(transition=SlideTransition(direction="up"))
@@ -87,6 +80,21 @@ class MyDevoirsApp(App):
         self.box.add_widget(self.sm)
 
         return self.box
+
+    # Dans on_start et non dans build : les tests appellent build() sans run(),
+    # et ne doivent pas maximiser leur fenêtre.
+    def on_start(self):  # pragma: no cover_all
+        from kivy.core.window import Window
+
+        # In packaged environments, a missing window provider can yield None.
+        if Window is None:
+            return
+        self.taille_fenetre = TailleFenetre(Window, self.config)
+        self.taille_fenetre.appliquer()
+
+    def on_stop(self):
+        if self.taille_fenetre:
+            self.taille_fenetre.enregistrer()
 
     def go_todo(self):
         self.sm.transition.direction = "down"

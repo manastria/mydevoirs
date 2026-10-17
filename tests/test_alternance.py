@@ -1,4 +1,5 @@
 import datetime
+import re
 
 import freezegun
 import pytest
@@ -18,6 +19,11 @@ from mydevoirs.alternance import (
 from mydevoirs.custom_setting import SettingSemaineCourante
 
 from .fixtures import *
+
+
+def sans_markup(texte):
+    """Texte du titre sans les balises Kivy ([size=...], [/size]...)."""
+    return re.sub(r"\[/?[a-z]+(=[^\]]*)?\]", "", texte)
 
 D = datetime.date
 AB = ["A", "B"]
@@ -128,33 +134,29 @@ class TestLettreConfiguree(MyDevoirsTestCase):
 
 
 class TestAgendaEnTete(MyDevoirsTestCase):
-    def test_en_tete_et_badge(self):
+    def test_lettre_dans_le_titre(self):
         agenda = Agenda()
         agenda.go_date(D(2027, 1, 6))
-        assert agenda.display_week_label.text == "Sem. 1 (B)"
-        assert "Sem. " in agenda.week_label.text
-        assert "(" in agenda.week_label.text
+        assert sans_markup(agenda.titre_semaine.text).startswith("Semaine 1 (B)")
 
     def test_desactivee_aucune_lettre(self):
         self.app.config.set("agenda", "alternance", "0")
         agenda = Agenda()
         agenda.go_date(D(2027, 1, 6))
-        assert agenda.display_week_label.text == "Sem. 1"
-        assert "(" not in agenda.week_label.text
+        assert sans_markup(agenda.titre_semaine.text).startswith("Semaine 1 · ")
 
     def test_changement_de_reglage_met_a_jour(self):
         agenda = Agenda()
         agenda.go_date(D(2027, 1, 6))
-        assert agenda.display_week_label.text == "Sem. 1 (B)"
         self.app.config.set("agenda", "alternance_libelles", "Paire, Impaire")
         agenda.go_date(D(2027, 1, 6))  # ce que fait on_config_change_agenda
-        assert agenda.display_week_label.text == "Sem. 1 (Impaire)"
+        assert sans_markup(agenda.titre_semaine.text).startswith("Semaine 1 (Impaire)")
 
-    def test_badge_aujourdhui(self):
+    def test_libelle_avec_crochets(self):
+        self.app.config.set("agenda", "alternance_libelles", "[A], [B]")
         agenda = Agenda()
-        today = datetime.date.today()
-        attendu = f"Sem. {today.isocalendar()[1]} ({lettre_configuree(today)})"
-        assert attendu in agenda.week_label.text
+        agenda.go_date(D(2027, 1, 6))
+        assert sans_markup(agenda.titre_semaine.text).startswith("Semaine 1 (&bl;B&br;)")
 
 
 class TestSettingSemaineCourante(MyDevoirsTestCase):

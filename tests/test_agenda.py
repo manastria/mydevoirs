@@ -2,6 +2,7 @@ import datetime
 from unittest.mock import MagicMock
 
 import freezegun
+import pytest
 from kivy.uix.dropdown import DropDown
 from kivy.uix.widget import Widget
 
@@ -12,6 +13,7 @@ from mydevoirs.agenda import (
     CarouselWidget,
     JourItems,
     JourWidget,
+    interpreter_saisie,
 )
 from mydevoirs.constants import SEMAINE
 from mydevoirs.matieredropdown import MatiereDropdown
@@ -119,7 +121,8 @@ class JourWidgetTestCase(MyDevoirsTestCase):
 
     def test_nice_date(self):
         jour = JourWidget(datetime.date(2019, 11, 12))
-        assert jour.ids.titre_jour.text == "mardi 12 novembre 2019 (semaine 46)"
+        assert jour.ids.titre_jour.text == "mardi 12 novembre"
+        assert JourWidget(datetime.date(2019, 11, 1)).nice_date == "vendredi 1er novembre"
 
     def test_add(self):
         day = f_jour()
@@ -400,14 +403,93 @@ class TestAgendaScreen(MyDevoirsTestCase):
         assert b.carousel.date == datetime.date(2012, 3, 2)
 
     def test_go_to_week_input(self):
-        with freezegun.freeze_time("2020-02-01"):
-            b = Agenda()
+        # Pas de freeze_time autour de Agenda() : Pony refuse le FakeDate de freezegun.
+        # La semaine saisie est cherchée dans l'année de la semaine affichée.
+        b = Agenda()
         b.goto_input.text = "12"
         b._on_goto_input(b.goto_input)
-        assert b.carousel.date == datetime.date(2020, 3, 16)
+        annee = datetime.date.today().isocalendar()[0]
+        assert b.carousel.date == datetime.date.fromisocalendar(annee, 12, 1)
+        assert b.goto_input.text == ""
+
+    def test_go_to_week_input_annee_affichee(self):
+        b = Agenda()
+        b.go_date(datetime.date(2026, 12, 28))
+        b.goto_input.text = "3"
+        b._on_goto_input(b.goto_input)
+        assert b.carousel.date == datetime.date(2026, 1, 12)
+
+    def test_go_to_week_year_input(self):
+        b = Agenda()
+        b.goto_input.text = "3/2027"
+        b._on_goto_input(b.goto_input)
+        assert b.carousel.date == datetime.date(2027, 1, 18)
 
     def test_go_to_date_input(self):
         b = Agenda()
         b.goto_input.text = "2020-07-06"
         b._on_goto_input(b.goto_input)
         assert b.carousel.date == datetime.date(2020, 7, 6)
+
+    def test_go_to_input_erreur_garde_la_saisie(self):
+        b = Agenda()
+        b.go_date(datetime.date(2025, 6, 2))
+        couleur = list(b.goto_input.foreground_color)
+        b.goto_input.text = "53"  # 2025 n'a pas de semaine 53
+        b._on_goto_input(b.goto_input)
+        assert b.carousel.date == datetime.date(2025, 6, 2)
+        assert b.goto_input.text == "53"
+        assert "2025 n'a pas de semaine 53" in b.titre_semaine.text
+        assert list(b.goto_input.foreground_color) != couleur
+        # Corriger la saisie efface le message
+        b.goto_input.text = "52"
+        assert "semaine 53" not in b.titre_semaine.text
+        assert list(b.goto_input.foreground_color) == couleur
+
+    def test_go_to_input_dates_extremes(self):
+        b = Agenda()
+        avant = b.carousel.date
+        for saisie in ["01/01/0001", "31/12/9999", "0001-01-01"]:
+            with self.subTest(saisie=saisie):
+                b.goto_input.text = saisie
+                b._on_goto_input(b.goto_input)
+                assert b.carousel.date == avant
+                assert b.goto_input.text == saisie
+
+
+class TestInterpreterSaisie:
+    @pytest.mark.parametrize(
+        "saisie, annee, attendu",
+        [
+            ("12", 2020, datetime.date(2020, 3, 16)),
+            (" 12 ", 2020, datetime.date(2020, 3, 16)),
+            ("1", 2027, datetime.date(2027, 1, 4)),
+            ("53", 2026, datetime.date(2026, 12, 28)),
+            ("3/2027", 2020, datetime.date(2027, 1, 18)),
+            ("06/07/2020", 2000, datetime.date(2020, 7, 6)),
+            ("2020-07-06", 2000, datetime.date(2020, 7, 6)),
+            ("01/01/1900", 2000, datetime.date(1900, 1, 1)),
+            ("31/12/2100", 2000, datetime.date(2100, 12, 31)),
+        ],
+    )
+    def test_valide(self, saisie, annee, attendu):
+        assert interpreter_saisie(saisie, annee) == attendu
+
+    @pytest.mark.parametrize(
+        "saisie, annee, message",
+        [
+            ("53", 2025, "2025 n'a pas de semaine 53"),
+            ("0", 2025, "2025 n'a pas de semaine 0"),
+            ("54", 2025, "2025 n'a pas de semaine 54"),
+            ("3/2200", 2025, "Année entre 1900 et 2100"),
+            ("12", 1899, "Année entre 1900 et 2100"),
+            ("01/01/0001", 2025, "Année entre 1900 et 2100"),
+            ("31/12/9999", 2025, "Année entre 1900 et 2100"),
+            ("32/01/2025", 2025, "Saisie non reconnue"),
+            ("abc", 2025, "Saisie non reconnue"),
+            ("123", 2025, "Saisie non reconnue"),
+        ],
+    )
+    def test_invalide(self, saisie, annee, message):
+        with pytest.raises(ValueError, match=message):
+            interpreter_saisie(saisie, annee)

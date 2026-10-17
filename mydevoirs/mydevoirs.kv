@@ -70,7 +70,7 @@
 		height: dp(30)
 		canvas.before:
 			Color:
-				rgba: app.theme['card_entete']
+				rgba: app.theme['aujourdhui'] if root.aujourdhui else app.theme['card_entete']
 			Rectangle:
 				pos: self.pos
 	            size: self.size

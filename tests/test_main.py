@@ -6,10 +6,13 @@ from mydevoirs.constants import VERSION
 
 
 def test_set_locale_fr():
-    if platform.system() == "Linux":
-        locale.setlocale(locale.LC_ALL, "en_US.utf8")
-    else:
-        locale.setlocale(locale.LC_ALL, "english")
+    try:
+        if platform.system() == "Linux":
+            locale.setlocale(locale.LC_ALL, "en_US.utf8")
+        else:
+            locale.setlocale(locale.LC_ALL, "english")
+    except locale.Error:
+        pytest.skip("locale de départ (en_US.utf8) non installée")
 
     set_locale_fr()
 

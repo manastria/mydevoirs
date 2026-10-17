@@ -3,6 +3,7 @@ from importlib.metadata import metadata
 
 from mydevoirs.alternance import LIBELLES_PAR_DEFAUT, REFERENCE_PAR_DEFAUT
 from mydevoirs.constants import DDB_FILENAME, VERSION, SEMAINE, THEMES
+from mydevoirs.fenetre import TAILLE_PAR_DEFAUT
 from mydevoirs.utils import get_dir
 
 meta = metadata("mydevoirs")
@@ -140,6 +141,12 @@ DEFAULT_SETTINGS = {
         "alternance": 1,
         "alternance_libelles": LIBELLES_PAR_DEFAUT,
         "alternance_reference": REFERENCE_PAR_DEFAUT,
+    },
+    # Pas dans AGENDA_PANEL : enregistré automatiquement à la fermeture
+    "fenetre": {
+        "largeur": TAILLE_PAR_DEFAUT[0],
+        "hauteur": TAILLE_PAR_DEFAUT[1],
+        "maximisee": 1,
     },
     "theme": {"theme": "standard"},
     "ddb": {"path": str(get_dir("cache") / DDB_FILENAME), "file_config_path": ""},

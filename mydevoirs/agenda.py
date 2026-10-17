@@ -1,18 +1,20 @@
 import datetime
 import itertools
+import re
 from typing import List
 
-from kivy.properties import NumericProperty, StringProperty
+from kivy.app import App
+from kivy.properties import BooleanProperty, NumericProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 from kivy.uix.carousel import Carousel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
-from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
+from kivy.utils import escape_markup
 from pony.orm import db_session
 from kivy.clock import Clock
-from kivy.graphics import Color, RoundedRectangle
 
 from mydevoirs.alternance import lettre_configuree
 from mydevoirs.constants import SEMAINE
@@ -20,6 +22,114 @@ from mydevoirs.database import db
 from mydevoirs.itemwidget import ItemWidget
 from mydevoirs.matieredropdown import MatiereDropdown
 from mydevoirs.utils import get_config
+
+
+def jour_du_mois(jour: datetime.date) -> str:
+    return "1er" if jour.day == 1 else str(jour.day)
+
+
+def date_courte(jour: datetime.date) -> str:
+    """12 octobre, 1er novembre"""
+    return f"{jour_du_mois(jour)} {jour.strftime('%B')}"
+
+
+def plage_de_dates(jours: List[datetime.date]) -> str:
+    """du 12 au 16 octobre, du 28 septembre au 2 octobre..."""
+    if not jours:
+        return ""
+    debut, fin = min(jours), max(jours)
+    if debut == fin:
+        return f"le {date_courte(debut)}"
+    if debut.year != fin.year:
+        return f"du {date_courte(debut)} {debut.year} au {date_courte(fin)} {fin.year}"
+    if debut.month == fin.month:
+        return f"du {jour_du_mois(debut)} au {date_courte(fin)}"
+    return f"du {date_courte(debut)} au {date_courte(fin)}"
+
+
+def debut_de_semaine(jour: datetime.date, start_day: int) -> datetime.date:
+    """Premier jour de la grille contenant `jour` (start_day : 0 = lundi)."""
+    return jour - datetime.timedelta(days=(jour.weekday() - start_day) % 7)
+
+
+def ecart_en_semaines(jour: datetime.date, reference: datetime.date, start_day: int) -> int:
+    return (
+        debut_de_semaine(jour, start_day) - debut_de_semaine(reference, start_day)
+    ).days // 7
+
+
+def position_relative(ecart: int) -> str:
+    if ecart == 0:
+        return "cette semaine"
+    if ecart == 1:
+        return "semaine prochaine"
+    if ecart == -1:
+        return "semaine dernière"
+    if ecart > 1:
+        return f"dans {ecart} semaines"
+    return f"il y a {-ecart} semaines"
+
+
+def titre_semaine(
+    lundi: datetime.date, jours_affiches: List[datetime.date], ecart: int
+) -> str:
+    """Titre de l'en-tête (markup Kivy) pour la grille contenant `lundi`."""
+    semaine = f"Semaine {lundi.isocalendar()[1]}"
+    lettre = lettre_configuree(lundi)
+    if lettre:
+        semaine += f" ({escape_markup(lettre)})"
+    # Pas de gras : les polices fournies n'existent qu'en version normale
+    parties = [
+        f"[size=18sp]{semaine}[/size]",
+        plage_de_dates(jours_affiches),
+        position_relative(ecart),
+    ]
+    return " · ".join(p for p in parties if p)
+
+
+def start_day_configure() -> int:
+    return SEMAINE.index(get_config("agenda", "start_day", str, "lundi"))
+
+
+def date_accueil(aujourdhui: datetime.date = None) -> datetime.date:
+    """Date montrée à l'ouverture : le week-end, la semaine suivante si réglé."""
+    jour = aujourdhui or datetime.date.today()
+    if jour.weekday() in (5, 6) and get_config("agenda", "auto_next_week", bool, False):
+        return jour + datetime.timedelta(days=3)
+    return jour
+
+
+ANNEE_MIN, ANNEE_MAX = 1900, 2100
+
+
+def interpreter_saisie(texte: str, annee: int) -> datetime.date:
+    """Date visée par le champ de saut ; ValueError avec un message lisible sinon.
+
+    Formats : `N` (semaine de l'année `annee`), `N/AAAA`, `JJ/MM/AAAA`, `AAAA-MM-JJ`.
+    Une semaine donne son lundi.
+    """
+    texte = texte.strip()
+    semaine = re.fullmatch(r"(\d{1,2})(?:/(\d{4}))?", texte)
+    if semaine:
+        numero = int(semaine[1])
+        if semaine[2]:
+            annee = int(semaine[2])
+        if not ANNEE_MIN <= annee <= ANNEE_MAX:
+            raise ValueError(f"Année entre {ANNEE_MIN} et {ANNEE_MAX}")
+        try:
+            return datetime.date.fromisocalendar(annee, numero, 1)
+        except ValueError:
+            raise ValueError(f"{annee} n'a pas de semaine {numero}") from None
+
+    for format_date in ("%d/%m/%Y", "%Y-%m-%d"):
+        try:
+            jour = datetime.datetime.strptime(texte, format_date).date()
+        except ValueError:
+            continue
+        if not ANNEE_MIN <= jour.year <= ANNEE_MAX:
+            raise ValueError(f"Année entre {ANNEE_MIN} et {ANNEE_MAX}")
+        return jour
+    raise ValueError("Saisie non reconnue : semaine ou date JJ/MM/AAAA")
 
 
 class AgendaItemWidget(ItemWidget):
@@ -64,10 +174,12 @@ class JourItems(BoxLayout):
 class JourWidget(BoxLayout):
 
     progression = StringProperty("0/0")
+    aujourdhui = BooleanProperty(False)
 
     def __init__(self, date, **kwargs):
         self.date = date  # need in nice_date
         super().__init__(**kwargs)
+        self.aujourdhui = date == datetime.date.today()
 
         self.jouritem = JourItems(date)
         self.jouritem.bind(minimum_height=self.jouritem.setter("height"))
@@ -81,8 +193,8 @@ class JourWidget(BoxLayout):
 
     @property
     def nice_date(self):
-        semaine = self.date.isocalendar()[1]
-        return self.date.strftime("%A %d %B %Y") + f" (sem. {semaine})"
+        # semaine et année sont dans l'en-tête de l'agenda
+        return f"{self.date.strftime('%A')} {date_courte(self.date)}"
 
     def add_item(self):
         with db_session:
@@ -131,10 +243,7 @@ class BaseGrid(GridLayout):
         return [get_config("agenda", j, bool, True) for j in SEMAINE]
 
     def build_grid(self, days_to_show: List[bool]):
-        getcfg = get_config("agenda", "start_day", str, "lundi")
-        start_day = SEMAINE.index(getcfg)
-
-        for d in self.get_week_days(days_to_show, start_day):
+        for d in self.get_week_days(days_to_show, start_day_configure()):
             self.add_widget(JourWidget(d))
 
 
@@ -145,15 +254,7 @@ class CarouselWidget(Carousel):
     def __init__(self, day=None):
         self._removing = False
         self._init = True
-        self.date = day or datetime.date.today()
-
-        # adjust the week
-        if (
-            not day
-            and self.date.weekday() in (5, 6)
-            and get_config("agenda", "auto_next_week", bool, False)
-        ):
-            self.date = self.date + datetime.timedelta(days=3)
+        self.date = day or date_accueil()
 
         super().__init__()
         self.add_widget(BaseGrid(self.date - datetime.timedelta(weeks=1)))
@@ -206,111 +307,122 @@ class Agenda(Screen):
         self.layout = BoxLayout(orientation="vertical")
         self.add_widget(self.layout)
 
-        # Header with current week number + search input on the same line
-        self.header = BoxLayout(orientation="horizontal", size_hint_y=None, height=30, spacing=5)
-
-        current_week = datetime.date.today().isocalendar()[1]
-        # Today badge: calendar icon + bold text on colored background
-        self.today_badge = BoxLayout(orientation="horizontal", padding=(8, 4), spacing=5, size_hint_x=None, height=30)
-        with self.today_badge.canvas.before:
-            Color(0.2, 0.6, 1, 0.20)
-            self._today_bg = RoundedRectangle(radius=[8, 8, 8, 8], pos=self.today_badge.pos, size=self.today_badge.size)
-        self.today_badge.bind(pos=lambda inst, val: setattr(self._today_bg, "pos", inst.pos))
-        self.today_badge.bind(size=lambda inst, val: setattr(self._today_bg, "size", inst.size))
-
-        self.today_icon = Image(size_hint=(None, None), size=(20, 20))
-        try:
-            # Lazy import to avoid circulars at module import time
-            from mydevoirs.utils import datas  # type: ignore
-
-            self.today_icon.source = datas.get("icon_agenda", "")
-        except Exception:
-            self.today_icon.source = ""
-
-        self.week_label = Label(text="", size_hint_x=None, markup=True)
-        # Adjust label width to fit its content
-        self.week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
-        # Compose badge
-        self.today_badge.add_widget(self.today_icon)
-        self.today_badge.add_widget(self.week_label)
-        # Fit badge to children
-        self.today_badge.bind(minimum_width=self.today_badge.setter("width"))
-
-        # Displayed week (from the visible agenda week)
-        self.display_week_label = Label(text="", size_hint_x=None)
-        self.display_week_label.bind(texture_size=lambda inst, val: setattr(inst, "width", val[0] + 10))
-
-        self.goto_input = TextInput(
-            hint_text="Semaine ou date DD/MM/YYYY",
-            multiline=False,
+        # En-tête : semaine affichée, retour à aujourd'hui, saut vers une date
+        self.header = BoxLayout(
+            orientation="horizontal",
             size_hint_y=None,
             height=30,
+            spacing=5,
+            padding=(8, 0, 0, 0),
         )
-        self.goto_input.bind(on_text_validate=self._on_goto_input)
 
-        self.header.add_widget(self.today_badge)
-        self.header.add_widget(self.display_week_label)
+        police = getattr(App.get_running_app(), "theme", {}).get("police")
+        avec_police = {"font_name": police} if police else {}
+        self.titre_semaine = Label(
+            markup=True,
+            halign="left",
+            valign="middle",
+            shorten=True,
+            shorten_from="right",
+            **avec_police,
+        )
+        self.titre_semaine.bind(size=self.titre_semaine.setter("text_size"))
+
+        # Visible seulement hors de la semaine montrée à l'ouverture
+        self.bouton_aujourdhui = Button(
+            text="Aujourd'hui", size_hint_x=None, width=120, **avec_police
+        )
+        self.bouton_aujourdhui.bind(on_release=lambda *args: self.go_date())
+
+        self.goto_input = TextInput(
+            hint_text="Semaine ou date JJ/MM/AAAA",
+            multiline=False,
+            size_hint=(None, None),
+            width=260,
+            height=30,
+        )
+        self._couleur_saisie = list(self.goto_input.foreground_color)
+        self._erreur_affichee = False
+        self.goto_input.bind(
+            on_text_validate=self._on_goto_input, text=self._effacer_erreur
+        )
+
+        self.header.add_widget(self.titre_semaine)
+        self.header.add_widget(self.bouton_aujourdhui)
         self.header.add_widget(self.goto_input)
         self.layout.add_widget(self.header)
 
         self.carousel = CarouselWidget()
         self.carousel.bind(index=self._on_carousel_index)
         self.layout.add_widget(self.carousel)
-        # Initialize displayed week label according to current carousel
-        self._refresh_display_week()
-        # Initialize current (today) badge with date + A/B info
-        self._refresh_today_badge()
+        self._refresh_entete()
+
+        # Le logiciel peut rester ouvert après minuit
+        self._jour = datetime.date.today()
+        Clock.schedule_interval(self._verifier_changement_de_jour, 60)
 
     def go_date(self, date=None):
         self.layout.remove_widget(self.carousel)
         self.carousel = CarouselWidget(date)
         self.carousel.bind(index=self._on_carousel_index)
         self.layout.add_widget(self.carousel)
-        self._refresh_display_week()
-        # Les réglages d'alternance ont pu changer (go_agenda)
-        self._refresh_today_badge()
+        # Les réglages (alternance, jours affichés) ont pu changer (go_agenda)
+        self._refresh_entete()
 
     def _on_goto_input(self, instance):
-        text = instance.text.strip()
-        if not text:
+        if not instance.text.strip():
             return
+        # Un numéro de semaine se lit dans l'année de la semaine affichée.
+        annee = self.carousel.date.isocalendar()[0]
         try:
-            if text.isdigit():
-                year = datetime.date.today().year
-                date = datetime.date.fromisocalendar(year, int(text), 1)
-            else:
-                # Try new format DD/MM/YYYY first, then legacy YYYY-MM-DD
-                try:
-                    date = datetime.datetime.strptime(text, "%d/%m/%Y").date()
-                except ValueError:
-                    date = datetime.datetime.strptime(text, "%Y-%m-%d").date()
-            self.go_date(date)
-        except ValueError:
-            pass
+            date = interpreter_saisie(instance.text, annee)
+        except ValueError as erreur:
+            # La saisie reste en place pour être corrigée.
+            self._signaler_erreur(str(erreur))
+            return
+        self.go_date(date)
         instance.text = ""
 
-    # --- internal helpers for week label syncing ---
-    @staticmethod
-    def _format_week_label(day: datetime.date) -> str:
-        label = f"Sem. {day.isocalendar()[1]}"
-        lettre = lettre_configuree(day)
-        return f"{label} ({lettre})" if lettre else label
+    def _signaler_erreur(self, message):
+        self.titre_semaine.text = f"[color=cc0000]{escape_markup(message)}[/color]"
+        self.goto_input.foreground_color = (0.8, 0, 0, 1)
+        self._erreur_affichee = True
 
-    def _refresh_display_week(self, *args):
-        try:
-            self.display_week_label.text = self._format_week_label(self.carousel.date)
-        except Exception:
-            # Best-effort; avoid hard failures in UI building
-            self.display_week_label.text = ""
+    def _effacer_erreur(self, *args):
+        if not self._erreur_affichee:
+            return
+        self._erreur_affichee = False
+        self.goto_input.foreground_color = self._couleur_saisie
+        self._refresh_entete()
+
+    def _refresh_entete(self, *args):
+        jour = self.carousel.date
+        aujourdhui = datetime.date.today()
+        start_day = start_day_configure()
+        debut = debut_de_semaine(jour, start_day)
+        # Le lundi de la grille donne le numéro et la lettre, même si la
+        # semaine affichée commence un autre jour.
+        lundi = debut + datetime.timedelta(days=-start_day % 7)
+        jours = list(
+            BaseGrid._get_week_days(jour, start_day, BaseGrid.get_days_to_show())
+        )
+        self.titre_semaine.text = titre_semaine(
+            lundi, jours, ecart_en_semaines(jour, aujourdhui, start_day)
+        )
+        hors_accueil = ecart_en_semaines(jour, date_accueil(aujourdhui), start_day) != 0
+        self.bouton_aujourdhui.opacity = 1 if hors_accueil else 0
+        self.bouton_aujourdhui.disabled = not hors_accueil
 
     def _on_carousel_index(self, *args):
         # Wait a tick so CarouselWidget.on_index updates its .date first
-        Clock.schedule_once(lambda dt: self._refresh_display_week(), 0)
+        Clock.schedule_once(lambda dt: self._refresh_entete(), 0)
 
-    def _refresh_today_badge(self):
-        try:
-            today = datetime.date.today()
-            dmy = today.strftime("%a %d/%m")
-            self.week_label.text = f"[b]Auj. {dmy} — {self._format_week_label(today)}[/b]"
-        except Exception:
-            pass
+    def _verifier_changement_de_jour(self, *args):
+        aujourdhui = datetime.date.today()
+        if aujourdhui == self._jour:
+            return
+        self._jour = aujourdhui
+        for grille in self.carousel.slides:
+            for jour in grille.children:
+                jour.aujourdhui = jour.date == aujourdhui
+        self._refresh_entete()
