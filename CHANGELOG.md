@@ -13,6 +13,7 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 - Le jour d'aujourd'hui est mis en couleur dans l'agenda. Les titres des jours n'indiquent plus la semaine ni l'année, déjà présentes dans l'en-tête.
 
 - Les fichiers d'installation sont publiés sous des noms fixes (`MyDevoirs-Windows.msi`, `MyDevoirs-Linux.AppImage`), sans numéro de version. Le site propose ainsi un téléchargement direct de la dernière version, adapté à votre système.
+- Le site explique la prise en main : noter un devoir, le cocher, changer de semaine (flèches, bouton « Aujourd'hui », champ de saut) et le rôle de la barre du haut.
 - Le champ de saut de l'agenda accepte un numéro de semaine (`12`), une semaine d'une autre année (`3/2027`) ou une date (`JJ/MM/AAAA`, `AAAA-MM-JJ`).
 
 ### Corrigé (Fixed)
