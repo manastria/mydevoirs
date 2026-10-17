@@ -50,7 +50,7 @@
         <p class="lead">MyDevoirs est un agenda de devoirs pour les enfants qui travaillent sur ordinateur en classe. On ouvre le logiciel, on choisit une matière, on écrit : rien d’autre à remplir.</p>
         <p class="notice"><span class="badge">Repris et maintenu</span><span>Le projet d’origine n’est plus maintenu. Cette version continue d’être corrigée et développée. <a href="#questions">En savoir plus.</a></span></p>
         <p class="actions">
-          <a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest">Télécharger MyDevoirs</a>
+          <a class="btn" id="telecharger" href="https://github.com/manastria/mydevoirs/releases/latest/download/MyDevoirs-Windows.msi">Télécharger pour Windows</a>
           <a class="btn alt" href="#vues">Voir à quoi ça ressemble</a>
         </p>
       </div>
@@ -136,29 +136,40 @@
   <section id="installer" aria-labelledby="h-installer">
     <div class="wrap">
       <h2 id="h-installer">Installer MyDevoirs</h2>
-      <p class="prose">Les fichiers d’installation sont publiés sur la page des versions du projet. Choisissez celui qui correspond à votre système.</p>
+      <p class="prose">Choisissez le fichier qui correspond à votre système : le téléchargement de la dernière version démarre aussitôt.</p>
       <div class="two">
         <div class="box">
           <h3>Windows</h3>
           <p class="file">Un fichier <code>.msi</code>, l’installateur habituel de Windows.</p>
           <ol>
-            <li>Téléchargez le fichier <code>.msi</code> de la dernière version.</li>
+            <li>Téléchargez le fichier <code>MyDevoirs-Windows.msi</code>.</li>
             <li>Double-cliquez dessus et laissez l’installation se faire.</li>
             <li>Un raccourci MyDevoirs apparaît dans le menu Démarrer.</li>
           </ol>
-          <p class="actions"><a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest">Dernière version</a></p>
+          <p class="actions"><a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest/download/MyDevoirs-Windows.msi">Télécharger pour Windows</a></p>
         </div>
         <div class="box">
           <h3>Linux</h3>
           <p class="file">Un fichier <code>.AppImage</code>, qui fonctionne sur toutes les distributions.</p>
           <ol>
-            <li>Téléchargez le fichier <code>.AppImage</code>.</li>
-            <li>Rendez-le exécutable : <code>chmod +x MyDevoirs.AppImage</code>, ou par clic droit, Propriétés, Permissions, « Autoriser l’exécution du fichier comme un programme ».</li>
+            <li>Téléchargez le fichier <code>MyDevoirs-Linux.AppImage</code>.</li>
+            <li>Rendez-le exécutable : <code>chmod +x MyDevoirs-Linux.AppImage</code>, ou par clic droit, Propriétés, Permissions, « Autoriser l’exécution du fichier comme un programme ».</li>
             <li>Double-cliquez : il n’y a rien à installer.</li>
           </ol>
-          <p class="actions"><a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest">Dernière version</a></p>
+          <p class="actions"><a class="btn" href="https://github.com/manastria/mydevoirs/releases/latest/download/MyDevoirs-Linux.AppImage">Télécharger pour Linux</a></p>
         </div>
       </div>
+      <p class="note">Les anciennes versions et le code source sont sur <a href="https://github.com/manastria/mydevoirs/releases">la page des versions</a>.</p>
+      <script>
+        // Sous Linux (hors Android), le bouton de l’en-tête propose l’AppImage au lieu du .msi.
+        (function () {
+          var b = document.getElementById("telecharger");
+          if (b && /Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent)) {
+            b.href = "https://github.com/manastria/mydevoirs/releases/latest/download/MyDevoirs-Linux.AppImage";
+            b.textContent = "Télécharger pour Linux";
+          }
+        })();
+      </script>
     </div>
   </section>
 

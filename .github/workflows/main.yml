@@ -157,6 +157,15 @@ jobs:
           pattern: installer-*
           merge-multiple: true
 
+      # Noms sans numéro de version : le site de présentation pointe vers
+      # .../releases/latest/download/MyDevoirs-Windows.msi (et -Linux.AppImage).
+      # Chaque fichier est facultatif : la release est créée même sans AppImage.
+      - name: Rename installers to stable names
+        run: |
+          for f in installers/*.msi; do [ -e "$f" ] && mv "$f" installers/MyDevoirs-Windows.msi; done
+          for f in installers/*.AppImage; do [ -e "$f" ] && mv "$f" installers/MyDevoirs-Linux.AppImage; done
+          ls -l installers
+
       - name: Create Release and upload files
         uses: softprops/action-gh-release@v1
         with:
