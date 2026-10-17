@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 
 SITE = pathlib.Path(__file__).resolve().parent
 PAGE = SITE / "index.html"
-SITE_URL = "https://manastria.github.io/mydevoirs/"
+SITE_URL = "https://mydevoirs.manastria.fr/"
 erreurs = []
 
 html = PAGE.read_text(encoding="utf-8")

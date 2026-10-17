@@ -6,7 +6,7 @@
 
 # MyDevoirs : La prise de devoirs sur ordinateur enfin simple !!!
 
-**[📖 Site de présentation](https://manastria.github.io/mydevoirs/)** · **[⬇️ Télécharger](https://github.com/manastria/mydevoirs/releases/latest)** · **[💬 Signaler un problème](https://github.com/manastria/mydevoirs/issues/new/choose)**
+**[📖 Site de présentation](https://mydevoirs.manastria.fr/)** · **[⬇️ Télécharger](https://github.com/manastria/mydevoirs/releases/latest)** · **[💬 Signaler un problème](https://github.com/manastria/mydevoirs/issues/new/choose)**
 
 ![agenda](docs/images/agenda800.png)
 

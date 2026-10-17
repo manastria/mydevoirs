@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Le [mode d'emploi](https://manastria.github.io/mydevoirs/) couvre déjà
+        Le [mode d'emploi](https://mydevoirs.manastria.fr/) couvre déjà
         l'installation, les raccourcis clavier, les couleurs et la synchronisation.
         Si vous n'y trouvez pas la réponse, posez votre question ici.
 
