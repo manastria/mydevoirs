@@ -5,7 +5,7 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
-## [Non publié]
+## [1.3.2] - 2026-10-17
 
 ### Modifié (Changed)
 - La fenêtre s'adapte à l'écran : elle s'ouvre maximisée au premier lancement, puis retrouve la taille qu'on lui a laissée en fermant MyDevoirs. Sur un petit écran (portable en 1366×768), le bas de l'agenda n'est plus caché.
