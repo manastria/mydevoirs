@@ -401,11 +401,13 @@ class TestAgendaScreen(MyDevoirsTestCase):
         assert b.carousel.date == datetime.date(2012, 3, 2)
 
     def test_go_to_week_input(self):
-        with freezegun.freeze_time("2020-02-01"):
-            b = Agenda()
+        # Pas de freeze_time autour de Agenda() : Pony refuse le FakeDate de freezegun.
+        # La semaine saisie est cherchée dans l'année du jour.
+        b = Agenda()
         b.goto_input.text = "12"
         b._on_goto_input(b.goto_input)
-        assert b.carousel.date == datetime.date(2020, 3, 16)
+        annee = datetime.date.today().year
+        assert b.carousel.date == datetime.date.fromisocalendar(annee, 12, 1)
 
     def test_go_to_date_input(self):
         b = Agenda()
