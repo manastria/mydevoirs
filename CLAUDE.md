@@ -18,8 +18,8 @@ Application de prise de devoirs en Python 3.11 / Kivy, empaquetée avec Briefcas
 ## Tests
 
 - `poetry run pytest -q`. Il faut un affichage réel (le fournisseur de fenêtre `mock` n'existe pas dans Kivy 2.3.1) : utiliser `xvfb-run -a` sur une machine sans écran.
-- 3 échecs connus depuis la 1.3.0, sans rapport avec le code récent : `test_nice_date` (test périmé), `test_go_to_week_input` (freezegun incompatible avec Pony) et `test_set_locale_fr` (demande la locale `en_US.utf8`).
-- Le job `test` de `.github/workflows/main.yml` est commenté : la CI ne lance aucun test.
+- La suite passe entièrement. `test_set_locale_fr` est ignoré quand la locale `en_US.utf8` manque. Ne pas créer `Agenda()` sous `freezegun.freeze_time` : Pony refuse le `FakeDate`.
+- Le job `test` de `.github/workflows/main.yml` lance les tests sous Linux (`xvfb-run`) et Windows. Il ne conditionne pas encore `build` (`needs: test` est commenté) : à activer une fois la CI vue au vert.
 
 ## Repères dans le code
 
