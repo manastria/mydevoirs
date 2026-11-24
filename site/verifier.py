@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Vérifie le site avant publication (lancé par .github/workflows/publier-site.yml).
 
-Cinq contrôles :
+Six contrôles :
   1. tous les fichiers liés par les pages existent bien dans site/ ;
   2. toutes les ancres internes (#...) correspondent à un identifiant de la page ;
   3. les pages ne chargent aucune ressource extérieure (polices comprises) : le site
      doit rester consultable sans dépendre d'un autre serveur ;
   4. les fichiers de preuve de propriété (Google Search Console) sont bien formés ;
-  5. sitemap.xml est valide et ne liste que des pages réellement publiées.
+  5. sitemap.xml est valide et ne liste que des pages réellement publiées ;
+  6. robots.txt autorise l'exploration et annonce le sitemap.
 
 Aucune dépendance : bibliothèque standard Python uniquement.
 """
@@ -105,9 +106,20 @@ else:
         if SITE_URL not in pages:
             erreurs.append(f"sitemap.xml : la page d'accueil {SITE_URL} devrait y figurer")
 
+# 6. robots.txt : présent, n'interdit pas tout le site, et annonce l'adresse exacte du sitemap.
+ROBOTS = SITE / "robots.txt"
+if not ROBOTS.exists():
+    erreurs.append("robots.txt est absent")
+else:
+    lignes = [l.split("#")[0].strip() for l in ROBOTS.read_text(encoding="utf-8").splitlines()]
+    if "Disallow: /" in lignes:
+        erreurs.append("robots.txt interdit l'exploration de tout le site (Disallow: /)")
+    if f"Sitemap: {SITE_URL}sitemap.xml" not in lignes:
+        erreurs.append(f"robots.txt devrait annoncer « Sitemap: {SITE_URL}sitemap.xml »")
+
 if erreurs:
     print("\n".join(f"ERREUR : {e}" for e in erreurs))
     sys.exit(1)
 print(f"Site vérifié : {len(PAGES)} page(s), {nb_liens} liens, {len(polices)} polices, {nb_apercu} image(s) d'aperçu, "
-      f"{len(preuves)} preuve(s) de propriété, {len(pages)} page(s) au sitemap, "
+      f"{len(preuves)} preuve(s) de propriété, {len(pages)} page(s) au sitemap, robots.txt, "
       "aucune ressource extérieure.")
